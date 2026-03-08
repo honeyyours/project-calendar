@@ -3051,18 +3051,6 @@
             }
             
             function setupRealtimeSync() {
-                // 프로젝트 실시간 동기화
-                const projectsRef = db.ref('projects');
-                projectsRef.on('value', (snapshot) => {
-                    const firebaseProjects = snapshot.val();
-                    if (firebaseProjects && Array.isArray(firebaseProjects)) {
-                        projects = firebaseProjects;
-                        localStorage.setItem('projects', JSON.stringify(projects));
-                        renderProjectTabs();
-                        renderLegend();
-                    }
-                });
-                
                 // 일정 실시간 동기화
                 const schedulesRef = db.ref('schedules');
                 let isFirstLoad = true;
@@ -3070,7 +3058,7 @@
                     const firebaseSchedules = snapshot.val() || {};
                     
                     if (isFirstLoad) {
-                        // 첫 로드: 로컬과 Firebase 데이터 병합 (최신 것 우선)
+                        // 첫 로드: 로컬과 Firebase 데이터 병합 (로컬 우선)
                         schedules = { ...firebaseSchedules, ...schedules };
                         isFirstLoad = false;
                         
@@ -3111,7 +3099,7 @@
                     renderCalendar();
                 });
                 
-                // 프로젝트 데이터도 병합
+                // 프로젝트 데이터 동기화
                 const projectsRef = db.ref('projects');
                 let isFirstProjectsLoad = true;
                 projectsRef.on('value', (snapshot) => {
