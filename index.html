@@ -287,19 +287,19 @@
             border-right: none;
         }
 
-        .day-cell:hover {
+        .day-cell:hover:not(.today) {
             background: #f9fafb;
         }
 
         .day-cell.today {
-            background: #fff7ed;
+            background: #fff7ed !important;
             box-shadow: inset 0 0 0 3px #f97316 !important;
-            position: relative;
-            z-index: 1;
+            position: relative !important;
+            z-index: 1 !important;
         }
 
         .day-cell.out-of-range {
-            background: #f5f5f5;
+            background: #f5f5f5 !important;
             opacity: 0.5;
         }
 
@@ -308,6 +308,7 @@
             background: #fff7ed !important;
             box-shadow: inset 0 0 0 3px #f97316 !important;
             opacity: 1 !important;
+            z-index: 2 !important;
         }
 
         .day-cell.confirmed {
@@ -317,6 +318,7 @@
         .day-cell.confirmed.today {
             background: #fde68a !important;
             box-shadow: inset 0 0 0 3px #f97316 !important;
+            z-index: 2 !important;
         }
 
         .day-cell.selected {
@@ -893,18 +895,19 @@
 
             /* 오늘 강조 */
             .day-cell.today {
-                background: #fef3c7;
+                background: #fef3c7 !important;
                 box-shadow: inset 0 0 0 2px #f97316 !important;
+                z-index: 1 !important;
             }
 
             .day-cell.today .day-date {
-                color: #f59e0b;
-                font-weight: 700;
+                color: #f59e0b !important;
+                font-weight: 700 !important;
             }
 
             /* 범위 밖 */
             .day-cell.out-of-range {
-                background: #f9fafb;
+                background: #f9fafb !important;
                 opacity: 0.6;
             }
 
@@ -913,6 +916,7 @@
                 background: #fef3c7 !important;
                 box-shadow: inset 0 0 0 2px #f97316 !important;
                 opacity: 1 !important;
+                z-index: 2 !important;
             }
 
             .legend {
@@ -1192,6 +1196,7 @@
             <h1>📅 프로젝트 통합 일정 관리</h1>
             <div class="controls">
                 <span class="firebase-status" id="firebaseStatus">로컬 모드</span>
+                <button class="btn" onclick="changeUserName()" style="font-size: 12px; padding: 4px 8px;">👤 닉네임 변경</button>
                 <span id="lastSaved" style="font-size: 13px; opacity: 0.9;"></span>
                 <button class="btn" onclick="openProcessExtractModal()">📋 공정별 일정</button>
                 <button class="btn" onclick="backupJSON()">💾 JSON 백업</button>
@@ -1661,12 +1666,20 @@
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             
+            // 디버깅: 오늘 날짜 확인
+            console.log('오늘 날짜:', formatDateKey(today), '현재 뷰:', currentView);
+            
             let currentDate = new Date(calendarStart);
             let weekNum = 1;
             
             while (currentDate <= calendarEnd) {
                 const dateStr = formatDateKey(currentDate);
                 const isToday = currentDate.getTime() === today.getTime();
+                
+                // 디버깅: 오늘 날짜일 때 로그
+                if (isToday) {
+                    console.log('✅ 오늘 날짜 발견!', dateStr, '뷰:', currentView);
+                }
                 const dayOfWeek = currentDate.getDay();
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 
@@ -2978,6 +2991,31 @@
 
         function toggleWeekFilter() {
             renderCalendar();
+        }
+
+        // ============================================
+        // 닉네임 변경
+        // ============================================
+
+        function changeUserName() {
+            const currentName = localStorage.getItem('userName') || currentUser.name;
+            const newName = prompt('새로운 닉네임을 입력하세요:', currentName);
+            
+            if (newName && newName.trim()) {
+                const trimmedName = newName.trim();
+                localStorage.setItem('userName', trimmedName);
+                currentUser.name = trimmedName;
+                
+                // Firebase 프레즌스 업데이트
+                if (useFirebase && db) {
+                    const presenceRef = db.ref(`presence/${currentUser.id}`);
+                    presenceRef.update({
+                        name: trimmedName
+                    });
+                }
+                
+                alert(`닉네임이 "${trimmedName}"(으)로 변경되었습니다.`);
+            }
         }
 
         // ============================================
