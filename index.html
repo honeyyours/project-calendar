@@ -691,13 +691,13 @@
             }
 
             .header {
-                padding: 16px;
+                padding: 12px;
                 flex-direction: column;
-                gap: 12px;
+                gap: 8px;
             }
 
             .header h1 {
-                font-size: 18px;
+                font-size: 16px;
             }
 
             .controls {
@@ -707,33 +707,37 @@
             }
 
             .btn {
-                padding: 8px 12px;
-                font-size: 12px;
+                padding: 6px 10px;
+                font-size: 11px;
             }
 
             .project-tabs {
                 padding: 0 8px;
                 gap: 4px;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
 
             .tab {
-                padding: 8px 10px;
+                padding: 8px 12px;
                 font-size: 12px;
+                flex-shrink: 0;
             }
 
             .calendar-wrapper {
-                padding: 8px;
-                overflow-x: auto;
+                padding: 0;
+                overflow-x: visible;
             }
 
             .project-info {
                 flex-direction: column;
                 padding: 10px;
-                gap: 10px;
+                gap: 8px;
+                font-size: 11px;
             }
 
             .project-info-title {
-                font-size: 15px;
+                font-size: 14px;
             }
 
             .project-info-dates {
@@ -741,91 +745,152 @@
             }
 
             .project-info-right {
-                padding: 8px 10px;
+                padding: 8px;
+                font-size: 11px;
             }
 
             .project-detail-item {
                 font-size: 11px;
-                margin-bottom: 6px;
+                margin-bottom: 4px;
             }
 
             .project-detail-label {
-                width: 60px;
+                width: 55px;
                 font-size: 10px;
             }
 
-            /* 달력 그리드 유지 (7칸) */
+            .project-info-edit-btn {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+
+            /* 달력 그리드 (네이버 스타일) */
             .calendar {
-                min-width: 100%;
+                width: 100%;
             }
 
             .calendar-header {
                 grid-template-columns: repeat(7, 1fr);
+                background: #f8f9fa;
             }
 
             .calendar-header div {
                 font-size: 11px;
-                padding: 6px 2px;
+                padding: 8px 4px;
+                font-weight: 600;
             }
 
             .calendar-body {
                 grid-template-columns: repeat(7, 1fr);
-                gap: 1px;
+                gap: 0;
             }
 
-            /* 셀 크기 작게 */
+            /* 셀 스타일 (네이버처럼 작고 깔끔하게) */
             .day-cell {
-                min-height: 60px;
-                padding: 4px;
-                font-size: 10px;
+                min-height: 55px;
+                max-height: 55px;
+                padding: 4px 2px;
+                border-right: 1px solid #e5e7eb;
+                border-bottom: 1px solid #e5e7eb;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .day-cell:nth-child(7n) {
+                border-right: none;
             }
 
             .day-date {
-                font-size: 11px;
+                font-size: 12px;
+                font-weight: 500;
                 margin-bottom: 2px;
+                text-align: center;
             }
 
-            /* 모바일에서는 요약만 표시 */
-            .day-content {
-                overflow: hidden;
+            .day-date[data-day-name="일"] {
+                color: #ef4444;
             }
 
-            .task-item {
-                display: none; /* 기본적으로 숨김 */
-            }
-
-            /* 요약 표시 (첫 번째만) */
-            .day-content .task-item:first-child {
-                display: block;
-                font-size: 9px !important;
-                padding: 2px 3px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            /* 더보기 표시 */
-            .day-cell.has-more::after {
-                content: '+ 더보기';
-                display: block;
-                font-size: 8px;
-                color: #667eea;
-                margin-top: 2px;
-                font-weight: 600;
-            }
-
-            .project-tag {
-                font-size: 8px;
-                padding: 1px 2px;
+            .day-date[data-day-name="토"] {
+                color: #3b82f6;
             }
 
             .week-number {
                 display: none;
             }
 
+            /* 일정 표시 (네이버 스타일) */
+            .day-content {
+                flex: 1;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                gap: 1px;
+            }
+
+            .task-item {
+                font-size: 9px !important;
+                line-height: 1.2;
+                padding: 1px 3px !important;
+                margin: 0 !important;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                border-radius: 2px;
+                display: block !important;
+            }
+
+            /* 최대 2개만 표시 */
+            .task-item:nth-child(n+3) {
+                display: none !important;
+            }
+
+            /* 프로젝트 태그 숨김 (색상으로만 구분) */
+            .project-tag {
+                display: none;
+            }
+
+            /* 더보기 표시 */
+            .day-cell.has-more .day-content::after {
+                content: '...';
+                font-size: 10px;
+                color: #999;
+                text-align: center;
+                font-weight: bold;
+                margin-top: 1px;
+            }
+
+            /* 확정 표시는 작은 점으로 */
+            .day-cell.confirmed::before {
+                content: '●';
+                position: absolute;
+                top: 2px;
+                right: 2px;
+                font-size: 8px;
+                color: #10b981;
+            }
+
+            /* 오늘 강조 */
+            .day-cell.today {
+                background: #fef3c7;
+            }
+
+            .day-cell.today .day-date {
+                color: #f59e0b;
+                font-weight: 700;
+            }
+
+            /* 범위 밖 */
+            .day-cell.out-of-range {
+                background: #f9fafb;
+                opacity: 0.6;
+            }
+
             .legend {
                 padding: 8px;
                 flex-wrap: wrap;
+                gap: 8px;
             }
 
             .legend-item {
@@ -833,8 +898,8 @@
             }
 
             .legend-color {
-                width: 12px;
-                height: 12px;
+                width: 10px;
+                height: 10px;
             }
 
             /* 모바일 상세 보기 모달 */
@@ -847,23 +912,33 @@
                 bottom: 0;
                 background: rgba(0,0,0,0.5);
                 z-index: 10000;
-                padding: 20px;
+                padding: 0;
             }
 
             .mobile-detail-modal.show {
                 display: flex;
-                align-items: center;
+                align-items: flex-end;
                 justify-content: center;
             }
 
             .mobile-detail-content {
                 background: white;
-                border-radius: 12px;
+                border-radius: 16px 16px 0 0;
                 padding: 20px;
-                max-width: 500px;
+                max-width: 600px;
                 width: 100%;
-                max-height: 80vh;
+                max-height: 70vh;
                 overflow-y: auto;
+                animation: slideUp 0.3s ease-out;
+            }
+
+            @keyframes slideUp {
+                from {
+                    transform: translateY(100%);
+                }
+                to {
+                    transform: translateY(0);
+                }
             }
 
             .mobile-detail-header {
@@ -876,18 +951,19 @@
             }
 
             .mobile-detail-title {
-                font-size: 16px;
+                font-size: 17px;
                 font-weight: 600;
-                color: #333;
+                color: #111;
             }
 
             .mobile-detail-close {
                 background: #f3f4f6;
                 border: none;
-                padding: 8px 12px;
-                border-radius: 6px;
+                padding: 8px 14px;
+                border-radius: 8px;
                 font-size: 14px;
                 cursor: pointer;
+                font-weight: 500;
             }
 
             .mobile-detail-body {
@@ -896,11 +972,17 @@
 
             .mobile-detail-body .task-item {
                 display: block !important;
-                font-size: 13px !important;
-                padding: 8px 10px;
-                margin: 6px 0;
-                white-space: normal;
-                border-radius: 6px;
+                font-size: 14px !important;
+                padding: 10px 12px !important;
+                margin: 8px 0 !important;
+                white-space: normal !important;
+                border-radius: 8px;
+                line-height: 1.5;
+            }
+
+            .mobile-detail-body .project-tag {
+                display: inline-block;
+                font-size: 10px;
             }
 
             .mobile-detail-empty {
@@ -910,12 +992,12 @@
                 font-size: 14px;
             }
 
-            /* 모달 */
+            /* 프로젝트 추가 모달 */
             .modal-content {
                 width: 95%;
                 max-width: 400px;
                 padding: 20px;
-                max-height: 90vh;
+                max-height: 85vh;
                 overflow-y: auto;
             }
 
@@ -940,18 +1022,17 @@
 
             /* 컨텍스트 메뉴 */
             .context-menu {
-                min-width: 120px;
+                min-width: 140px;
             }
 
             .context-menu-item {
-                padding: 10px 12px;
-                font-size: 13px;
+                padding: 12px 16px;
+                font-size: 14px;
             }
 
-            /* 편집 textarea */
-            .edit-textarea {
-                font-size: 14px;
-                min-height: 100px;
+            /* 편집 비활성화 (모바일에서는 조회만) */
+            .day-cell {
+                cursor: pointer;
             }
 
             /* 저장 인디케이터 */
@@ -994,38 +1075,31 @@
             }
 
             .btn {
-                padding: 6px 8px;
+                padding: 5px 8px;
                 font-size: 10px;
             }
 
             .tab {
-                padding: 6px 8px;
+                padding: 6px 10px;
                 font-size: 11px;
             }
 
             .project-info-title {
-                font-size: 14px;
-            }
-
-            .calendar-body {
-                gap: 0px;
+                font-size: 13px;
             }
 
             .day-cell {
                 min-height: 50px;
-                padding: 3px;
+                max-height: 50px;
+                padding: 3px 1px;
             }
 
             .day-date {
-                font-size: 10px;
+                font-size: 11px;
             }
 
-            .task-item:first-child {
+            .task-item {
                 font-size: 8px !important;
-            }
-
-            .day-cell.has-more::after {
-                font-size: 7px;
             }
         }
 
@@ -1482,7 +1556,7 @@
             bodyContainer.innerHTML = cells.join('');
         }
 
-        // 일정이 2개 이상인지 체크
+        // 일정이 3개 이상인지 체크 (2개까지는 보임)
         function checkHasMore(dateStr) {
             if (currentView === 'all') {
                 let count = 0;
@@ -1494,13 +1568,13 @@
                         count += lines.length;
                     }
                 });
-                return count > 1;
+                return count > 2;
             } else {
                 const scheduleKey = `${currentView}_${dateStr}`;
                 const content = schedules[scheduleKey];
                 if (content) {
                     const lines = content.split('\n').filter(l => l.trim());
-                    return lines.length > 1;
+                    return lines.length > 2;
                 }
                 return false;
             }
@@ -1561,6 +1635,13 @@
         // ============================================
 
         function editCellDirect(dateStr, cellElement) {
+            // 모바일에서는 편집 불가, 상세보기만
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                showMobileDetail(dateStr);
+                return;
+            }
+            
             // 전체 뷰에서는 편집 불가
             if (currentView === 'all') {
                 alert('개별 프로젝트 탭을 선택한 후 편집해주세요.');
