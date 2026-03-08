@@ -1139,6 +1139,7 @@
             <div class="controls">
                 <span class="firebase-status" id="firebaseStatus">로컬 모드</span>
                 <span id="lastSaved" style="font-size: 13px; opacity: 0.9;"></span>
+                <button class="btn" onclick="openProcessExtractModal()">📋 공정별 일정</button>
                 <button class="btn" onclick="backupJSON()">💾 JSON 백업</button>
                 <button class="btn" onclick="backupPDF()">📄 PDF 백업</button>
                 <button class="btn" onclick="document.getElementById('restoreFile').click()">📂 복원</button>
@@ -1149,6 +1150,14 @@
 
         <div class="project-tabs" id="projectTabs">
             <!-- 동적 생성 -->
+        </div>
+        
+        <!-- 전체 프로젝트 필터 버튼 -->
+        <div id="viewFilterContainer" style="display: none; padding: 8px 24px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+            <label style="font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                <input type="checkbox" id="showFromThisWeek" onchange="toggleWeekFilter()" style="cursor: pointer;">
+                <span>이번 주부터 보기</span>
+            </label>
         </div>
 
         <div class="calendar-wrapper">
@@ -1235,6 +1244,29 @@
             <div class="form-actions">
                 <button class="btn-secondary" onclick="closeAddProjectModal()">취소</button>
                 <button class="btn-primary" onclick="addProject()">추가</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 공정별 일정 추출 모달 -->
+    <div class="modal" id="processExtractModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <h2>📋 공정별 일정 추출</h2>
+            <div class="form-group">
+                <label>공정 키워드 *</label>
+                <input type="text" id="processKeyword" placeholder="예: 목공, 전기, 타일 등" onkeypress="if(event.key==='Enter') extractProcessSchedule()">
+                <div style="margin-top: 4px; font-size: 12px; color: #666;">
+                    오늘 이후 일정만 추출됩니다
+                </div>
+            </div>
+            <div class="form-group">
+                <label>추출 결과</label>
+                <textarea id="extractResult" readonly style="min-height: 300px; font-family: monospace; font-size: 13px; line-height: 1.6;"></textarea>
+            </div>
+            <div class="form-actions">
+                <button class="btn-secondary" onclick="closeProcessExtractModal()">닫기</button>
+                <button class="btn-primary" onclick="extractProcessSchedule()">🔍 추출</button>
+                <button class="btn-primary" onclick="copyExtractResult()" id="copyBtn" style="display: none;">📋 복사</button>
             </div>
         </div>
     </div>
@@ -1427,6 +1459,15 @@
 
         function switchView(viewId) {
             currentView = viewId;
+            
+            // 전체 프로젝트 뷰일 때만 필터 표시
+            const filterContainer = document.getElementById('viewFilterContainer');
+            if (viewId === 'all') {
+                filterContainer.style.display = 'block';
+            } else {
+                filterContainer.style.display = 'none';
+            }
+            
             renderProjectTabs();
             renderCalendar();
             renderLegend();
@@ -1448,6 +1489,16 @@
                 startDate = new Date(Math.min(...dates));
                 endDate = new Date(Math.max(...dates));
                 projectName = '전체 프로젝트';
+                
+                // 이번 주부터 보기 필터
+                const showFromThisWeek = document.getElementById('showFromThisWeek').checked;
+                if (showFromThisWeek) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    if (today > startDate) {
+                        startDate = today;
+                    }
+                }
                 
                 infoContainer.className = 'project-info all-view';
             } else {
@@ -1609,8 +1660,10 @@
         }
 
         function getDaySchedules(dateStr) {
+            const isMobile = window.innerWidth <= 768;
+            
             if (currentView === 'all') {
-                // 전체 뷰: 모든 프로젝트의 일정 표시 (프로젝트별 색상, 공정만 표시)
+                // 전체 뷰
                 return projects.map(project => {
                     const scheduleKey = `${project.id}_${dateStr}`;
                     const content = schedules[scheduleKey];
@@ -1619,15 +1672,27 @@
                     const isConfirmed = confirmedSchedules[scheduleKey] === true;
                     const lines = content.split('\n').filter(l => l.trim());
                     return lines.map(line => {
-                        return `
-                            <div class="task-item project-color-${project.color} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}: ${line}">
-                                ${line}
-                            </div>
-                        `;
+                        if (isMobile) {
+                            // 모바일: 프로젝트별 색상 + 공정만
+                            return `
+                                <div class="task-item project-color-${project.color} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}: ${line}">
+                                    ${line}
+                                </div>
+                            `;
+                        } else {
+                            // 데스크톱: 공정별 색상 + 프로젝트명 표시
+                            const process = detectProcess(line);
+                            return `
+                                <div class="task-item process-${process} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}">
+                                    <span class="project-tag" style="background: rgba(0,0,0,0.1);">${project.name}</span>
+                                    ${line}
+                                </div>
+                            `;
+                        }
                     }).join('');
                 }).join('');
             } else {
-                // 개별 프로젝트 뷰 (큰 글씨, 프로젝트 색상)
+                // 개별 프로젝트 뷰 (큰 글씨, 프로젝트 색상) - 모바일/데스크톱 동일
                 const scheduleKey = `${currentView}_${dateStr}`;
                 const content = schedules[scheduleKey];
                 if (!content) return '';
@@ -2237,6 +2302,7 @@
 
         function renderLegend() {
             const legendContainer = document.getElementById('legend');
+            const isMobile = window.innerWidth <= 768;
             
             const commonItems = [
                 '<div class="legend-color" style="background: #fff7ed; border: 1px solid #fed7aa;"></div><span>오늘</span>',
@@ -2245,31 +2311,61 @@
             ];
             
             if (currentView === 'all') {
-                // 전체 뷰: 프로젝트별 범례 (모바일 최적화)
-                const projectItems = projects.map(p => 
-                    `<div class="legend-color project-color-${p.color}"></div><span>${p.name}</span>`
-                );
-                
-                legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
-                    `<div class="legend-item">${item}</div>`
-                ).join('');
+                if (isMobile) {
+                    // 모바일 - 전체 뷰: 프로젝트별 범례
+                    const projectItems = projects.map(p => 
+                        `<div class="legend-color project-color-${p.color}"></div><span>${p.name}</span>`
+                    );
+                    
+                    legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
+                        `<div class="legend-item">${item}</div>`
+                    ).join('');
+                } else {
+                    // 데스크톱 - 전체 뷰: 공정별 범례
+                    const processItems = [
+                        '<div class="legend-color process-철거"></div><span>철거</span>',
+                        '<div class="legend-color process-목공"></div><span>목공</span>',
+                        '<div class="legend-color process-전기"></div><span>전기</span>',
+                        '<div class="legend-color process-타일"></div><span>타일</span>',
+                        '<div class="legend-color process-페인트"></div><span>페인트</span>',
+                        '<div class="legend-color process-필름"></div><span>필름</span>',
+                        '<div class="legend-color process-가구"></div><span>가구</span>',
+                        '<div class="legend-color process-설비"></div><span>설비</span>',
+                        '<div class="legend-color process-마감"></div><span>마감</span>'
+                    ];
+                    
+                    legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
+                        `<div class="legend-item">${item}</div>`
+                    ).join('');
+                }
             } else {
-                // 개별 프로젝트 뷰: 공정별 범례
-                const processItems = [
-                    '<div class="legend-color process-철거"></div><span>철거</span>',
-                    '<div class="legend-color process-목공"></div><span>목공</span>',
-                    '<div class="legend-color process-전기"></div><span>전기</span>',
-                    '<div class="legend-color process-타일"></div><span>타일</span>',
-                    '<div class="legend-color process-페인트"></div><span>페인트</span>',
-                    '<div class="legend-color process-필름"></div><span>필름</span>',
-                    '<div class="legend-color process-가구"></div><span>가구</span>',
-                    '<div class="legend-color process-설비"></div><span>설비</span>',
-                    '<div class="legend-color process-마감"></div><span>마감</span>'
-                ];
-                
-                legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
-                    `<div class="legend-item">${item}</div>`
-                ).join('');
+                if (isMobile) {
+                    // 모바일 - 개별 프로젝트 뷰: 공정별 범례
+                    const processItems = [
+                        '<div class="legend-color process-철거"></div><span>철거</span>',
+                        '<div class="legend-color process-목공"></div><span>목공</span>',
+                        '<div class="legend-color process-전기"></div><span>전기</span>',
+                        '<div class="legend-color process-타일"></div><span>타일</span>',
+                        '<div class="legend-color process-페인트"></div><span>페인트</span>',
+                        '<div class="legend-color process-필름"></div><span>필름</span>',
+                        '<div class="legend-color process-가구"></div><span>가구</span>',
+                        '<div class="legend-color process-설비"></div><span>설비</span>',
+                        '<div class="legend-color process-마감"></div><span>마감</span>'
+                    ];
+                    
+                    legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
+                        `<div class="legend-item">${item}</div>`
+                    ).join('');
+                } else {
+                    // 데스크톱 - 개별 프로젝트 뷰: 프로젝트별 범례
+                    const projectItems = projects.map(p => 
+                        `<div class="legend-color project-color-${p.color}"></div><span>${p.name}</span>`
+                    );
+                    
+                    legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
+                        `<div class="legend-item">${item}</div>`
+                    ).join('');
+                }
             }
         }
 
@@ -2579,6 +2675,131 @@
 
         function formatDateDisplay(date) {
             return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+        }
+
+        // ============================================
+        // 공정별 일정 추출
+        // ============================================
+
+        function openProcessExtractModal() {
+            document.getElementById('processExtractModal').style.display = 'flex';
+            document.getElementById('processKeyword').value = '';
+            document.getElementById('extractResult').value = '';
+            document.getElementById('copyBtn').style.display = 'none';
+            document.getElementById('processKeyword').focus();
+        }
+
+        function closeProcessExtractModal() {
+            document.getElementById('processExtractModal').style.display = 'none';
+        }
+
+        function extractProcessSchedule() {
+            const keyword = document.getElementById('processKeyword').value.trim();
+            if (!keyword) {
+                alert('공정 키워드를 입력해주세요.');
+                return;
+            }
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            const results = [];
+            const projectSites = new Map(); // 프로젝트별 현장 정보 저장
+
+            // 모든 날짜와 프로젝트 검색
+            projects.forEach(project => {
+                Object.keys(schedules).forEach(scheduleKey => {
+                    if (!scheduleKey.startsWith(project.id + '_')) return;
+                    
+                    const dateStr = scheduleKey.substring(project.id.length + 1);
+                    const scheduleDate = new Date(dateStr);
+                    
+                    // 오늘 이후만
+                    if (scheduleDate < today) return;
+                    
+                    const content = schedules[scheduleKey];
+                    if (content && content.toLowerCase().includes(keyword.toLowerCase())) {
+                        results.push({
+                            date: scheduleDate,
+                            dateStr: dateStr,
+                            projectName: project.name,
+                            content: content,
+                            address: project.address,
+                            doorPassword: project.doorPassword,
+                            siteNotes: project.siteNotes
+                        });
+                        
+                        // 현장 정보 저장
+                        if (!projectSites.has(project.name)) {
+                            projectSites.set(project.name, {
+                                address: project.address,
+                                doorPassword: project.doorPassword,
+                                siteNotes: project.siteNotes
+                            });
+                        }
+                    }
+                });
+            });
+
+            // 날짜순 정렬
+            results.sort((a, b) => a.date - b.date);
+
+            // 결과 포맷팅
+            let output = '';
+            
+            if (results.length === 0) {
+                output = '해당 공정의 향후 일정이 없습니다.';
+            } else {
+                // 일정 목록
+                results.forEach(result => {
+                    const dateFormatted = `${String(result.date.getFullYear()).substring(2)}.${String(result.date.getMonth() + 1).padStart(2, '0')}.${String(result.date.getDate()).padStart(2, '0')}`;
+                    output += `<${dateFormatted}> ${result.projectName} - ${result.content}\n`;
+                });
+                
+                // 현장 정보
+                output += '\n━━━━━━━━━━━━━━━━━━━━\n';
+                output += '[현장 정보]\n\n';
+                
+                projectSites.forEach((info, projectName) => {
+                    output += `▪ ${projectName}\n`;
+                    if (info.address) {
+                        output += `  주소: ${info.address}\n`;
+                    }
+                    if (info.doorPassword) {
+                        output += `  출입번호: ${info.doorPassword}\n`;
+                    }
+                    if (info.siteNotes) {
+                        output += `  현장정보:\n${info.siteNotes.split('\n').map(line => '  ' + line).join('\n')}\n`;
+                    }
+                    output += '\n';
+                });
+            }
+
+            document.getElementById('extractResult').value = output;
+            document.getElementById('copyBtn').style.display = 'inline-block';
+        }
+
+        function copyExtractResult() {
+            const resultText = document.getElementById('extractResult').value;
+            
+            navigator.clipboard.writeText(resultText).then(() => {
+                const copyBtn = document.getElementById('copyBtn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ 복사됨!';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                alert('복사에 실패했습니다: ' + err);
+            });
+        }
+
+        // ============================================
+        // 주차 필터
+        // ============================================
+
+        function toggleWeekFilter() {
+            renderCalendar();
         }
 
         // ============================================
