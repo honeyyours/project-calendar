@@ -712,104 +712,202 @@
             }
 
             .project-tabs {
-                padding: 0 12px;
+                padding: 0 8px;
                 gap: 4px;
             }
 
             .tab {
-                padding: 10px 12px;
-                font-size: 13px;
+                padding: 8px 10px;
+                font-size: 12px;
             }
 
             .calendar-wrapper {
-                padding: 12px;
+                padding: 8px;
+                overflow-x: auto;
             }
 
             .project-info {
                 flex-direction: column;
-                padding: 12px;
-                gap: 12px;
+                padding: 10px;
+                gap: 10px;
             }
 
             .project-info-title {
-                font-size: 16px;
+                font-size: 15px;
             }
 
             .project-info-dates {
-                font-size: 12px;
+                font-size: 11px;
             }
 
             .project-info-right {
-                padding: 10px 12px;
+                padding: 8px 10px;
             }
 
             .project-detail-item {
-                font-size: 12px;
+                font-size: 11px;
                 margin-bottom: 6px;
             }
 
             .project-detail-label {
-                width: 70px;
-                font-size: 11px;
+                width: 60px;
+                font-size: 10px;
+            }
+
+            /* 달력 그리드 유지 (7칸) */
+            .calendar {
+                min-width: 100%;
             }
 
             .calendar-header {
-                display: none;
+                grid-template-columns: repeat(7, 1fr);
+            }
+
+            .calendar-header div {
+                font-size: 11px;
+                padding: 6px 2px;
             }
 
             .calendar-body {
-                grid-template-columns: 1fr;
-                gap: 8px;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 1px;
             }
 
+            /* 셀 크기 작게 */
             .day-cell {
-                border: 1px solid #ddd;
-                border-radius: 8px;
-                min-height: 80px;
-                padding: 8px;
-            }
-
-            .day-cell:nth-child(7n) {
-                border-right: 1px solid #ddd;
+                min-height: 60px;
+                padding: 4px;
+                font-size: 10px;
             }
 
             .day-date {
-                font-size: 13px;
-                margin-bottom: 6px;
+                font-size: 11px;
+                margin-bottom: 2px;
             }
 
-            .day-date::before {
-                content: attr(data-day-name) ' ';
-                font-weight: 600;
-                color: #667eea;
+            /* 모바일에서는 요약만 표시 */
+            .day-content {
+                overflow: hidden;
             }
 
             .task-item {
-                font-size: 11px !important;
-                padding: 4px 6px;
-                margin: 3px 0;
+                display: none; /* 기본적으로 숨김 */
             }
 
-            .task-item.large {
-                font-size: 12px !important;
+            /* 요약 표시 (첫 번째만) */
+            .day-content .task-item:first-child {
+                display: block;
+                font-size: 9px !important;
+                padding: 2px 3px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            /* 더보기 표시 */
+            .day-cell.has-more::after {
+                content: '+ 더보기';
+                display: block;
+                font-size: 8px;
+                color: #667eea;
+                margin-top: 2px;
+                font-weight: 600;
             }
 
             .project-tag {
-                font-size: 9px;
+                font-size: 8px;
+                padding: 1px 2px;
+            }
+
+            .week-number {
+                display: none;
             }
 
             .legend {
-                padding: 10px 12px;
+                padding: 8px;
                 flex-wrap: wrap;
             }
 
             .legend-item {
-                font-size: 11px;
+                font-size: 10px;
             }
 
             .legend-color {
-                width: 14px;
-                height: 14px;
+                width: 12px;
+                height: 12px;
+            }
+
+            /* 모바일 상세 보기 모달 */
+            .mobile-detail-modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 10000;
+                padding: 20px;
+            }
+
+            .mobile-detail-modal.show {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-detail-content {
+                background: white;
+                border-radius: 12px;
+                padding: 20px;
+                max-width: 500px;
+                width: 100%;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .mobile-detail-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+                padding-bottom: 12px;
+                border-bottom: 2px solid #e5e7eb;
+            }
+
+            .mobile-detail-title {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333;
+            }
+
+            .mobile-detail-close {
+                background: #f3f4f6;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                cursor: pointer;
+            }
+
+            .mobile-detail-body {
+                font-size: 14px;
+            }
+
+            .mobile-detail-body .task-item {
+                display: block !important;
+                font-size: 13px !important;
+                padding: 8px 10px;
+                margin: 6px 0;
+                white-space: normal;
+                border-radius: 6px;
+            }
+
+            .mobile-detail-empty {
+                text-align: center;
+                padding: 40px 20px;
+                color: #999;
+                font-size: 14px;
             }
 
             /* 모달 */
@@ -853,7 +951,7 @@
             /* 편집 textarea */
             .edit-textarea {
                 font-size: 14px;
-                min-height: 60px;
+                min-height: 100px;
             }
 
             /* 저장 인디케이터 */
@@ -892,30 +990,42 @@
         /* 작은 스마트폰 */
         @media (max-width: 375px) {
             .header h1 {
-                font-size: 16px;
-            }
-
-            .btn {
-                padding: 6px 10px;
-                font-size: 11px;
-            }
-
-            .tab {
-                padding: 8px 10px;
-                font-size: 12px;
-            }
-
-            .project-info-title {
                 font-size: 15px;
             }
 
-            .day-cell {
-                min-height: 70px;
-                padding: 6px;
+            .btn {
+                padding: 6px 8px;
+                font-size: 10px;
             }
 
-            .task-item {
-                font-size: 10px !important;
+            .tab {
+                padding: 6px 8px;
+                font-size: 11px;
+            }
+
+            .project-info-title {
+                font-size: 14px;
+            }
+
+            .calendar-body {
+                gap: 0px;
+            }
+
+            .day-cell {
+                min-height: 50px;
+                padding: 3px;
+            }
+
+            .day-date {
+                font-size: 10px;
+            }
+
+            .task-item:first-child {
+                font-size: 8px !important;
+            }
+
+            .day-cell.has-more::after {
+                font-size: 7px;
             }
         }
 
@@ -993,6 +1103,17 @@
     <div class="context-menu" id="contextMenu">
         <div class="context-menu-item success" onclick="toggleConfirm()">✓ 확정 표시</div>
         <div class="context-menu-item danger" onclick="toggleConfirm()">✗ 확정 해제</div>
+    </div>
+
+    <!-- 모바일 상세 보기 모달 -->
+    <div class="mobile-detail-modal" id="mobileDetailModal">
+        <div class="mobile-detail-content">
+            <div class="mobile-detail-header">
+                <div class="mobile-detail-title" id="mobileDetailTitle"></div>
+                <button class="mobile-detail-close" onclick="closeMobileDetail()">✕ 닫기</button>
+            </div>
+            <div class="mobile-detail-body" id="mobileDetailBody"></div>
+        </div>
     </div>
 
     <!-- 프로젝트 추가 모달 -->
@@ -1334,11 +1455,14 @@
                 // 해당 날짜의 일정 가져오기
                 const daySchedules = getDaySchedules(dateStr);
                 
+                // 일정이 2개 이상이면 has-more 클래스 추가
+                const hasMoreSchedules = checkHasMore(dateStr);
+                
                 cells.push(`
-                    <div class="day-cell ${isToday ? 'today' : ''} ${isOutOfRange ? 'out-of-range' : ''} ${isConfirmed ? 'confirmed' : ''}" 
+                    <div class="day-cell ${isToday ? 'today' : ''} ${isOutOfRange ? 'out-of-range' : ''} ${isConfirmed ? 'confirmed' : ''} ${hasMoreSchedules ? 'has-more' : ''}" 
                          ondblclick="editCellDirect('${dateStr}', this)"
                          oncontextmenu="showContextMenu(event, '${dateStr}'); return false;"
-                         onclick="selectCell('${dateStr}')"
+                         onclick="handleCellClick('${dateStr}')"
                          data-date="${dateStr}">
                         <div class="day-date" data-day-name="${dayNames[dayOfWeek]}">
                             ${currentDate.getMonth() + 1}/${currentDate.getDate()}
@@ -1356,6 +1480,44 @@
             }
             
             bodyContainer.innerHTML = cells.join('');
+        }
+
+        // 일정이 2개 이상인지 체크
+        function checkHasMore(dateStr) {
+            if (currentView === 'all') {
+                let count = 0;
+                projects.forEach(project => {
+                    const scheduleKey = `${project.id}_${dateStr}`;
+                    const content = schedules[scheduleKey];
+                    if (content) {
+                        const lines = content.split('\n').filter(l => l.trim());
+                        count += lines.length;
+                    }
+                });
+                return count > 1;
+            } else {
+                const scheduleKey = `${currentView}_${dateStr}`;
+                const content = schedules[scheduleKey];
+                if (content) {
+                    const lines = content.split('\n').filter(l => l.trim());
+                    return lines.length > 1;
+                }
+                return false;
+            }
+        }
+
+        // 셀 클릭 처리 (모바일/데스크톱 분기)
+        function handleCellClick(dateStr) {
+            // 모바일 체크
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isMobile) {
+                // 모바일: 상세 보기 모달
+                showMobileDetail(dateStr);
+            } else {
+                // 데스크톱: 셀 선택
+                selectCell(dateStr);
+            }
         }
 
         function getDaySchedules(dateStr) {
@@ -2189,6 +2351,83 @@
             // 메뉴 닫기
             document.getElementById('contextMenu').classList.remove('show');
         }
+
+        // ============================================
+        // 모바일 상세 보기
+        // ============================================
+
+        function showMobileDetail(dateStr) {
+            const modal = document.getElementById('mobileDetailModal');
+            const titleDiv = document.getElementById('mobileDetailTitle');
+            const bodyDiv = document.getElementById('mobileDetailBody');
+            
+            // 날짜 포맷
+            const date = new Date(dateStr);
+            const dayNames = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+            const title = `${date.getMonth() + 1}월 ${date.getDate()}일 (${dayNames[date.getDay()]})`;
+            
+            titleDiv.textContent = title;
+            
+            // 일정 내용 가져오기
+            let scheduleHTML = '';
+            
+            if (currentView === 'all') {
+                // 전체 뷰: 모든 프로젝트의 일정
+                projects.forEach(project => {
+                    const scheduleKey = `${project.id}_${dateStr}`;
+                    const content = schedules[scheduleKey];
+                    if (content) {
+                        const isConfirmed = confirmedSchedules[scheduleKey] === true;
+                        const lines = content.split('\n').filter(l => l.trim());
+                        lines.forEach(line => {
+                            const process = detectProcess(line);
+                            scheduleHTML += `
+                                <div class="task-item process-${process} ${isConfirmed ? 'confirmed' : ''}">
+                                    <span class="project-tag" style="background: rgba(0,0,0,0.1);">${project.name}</span>
+                                    ${line}
+                                </div>
+                            `;
+                        });
+                    }
+                });
+            } else {
+                // 개별 프로젝트 뷰
+                const scheduleKey = `${currentView}_${dateStr}`;
+                const content = schedules[scheduleKey];
+                if (content) {
+                    const project = projects.find(p => p.id === currentView);
+                    const lines = content.split('\n').filter(l => l.trim());
+                    lines.forEach(line => {
+                        scheduleHTML += `
+                            <div class="task-item large project-color-${project.color}">
+                                ${line}
+                            </div>
+                        `;
+                    });
+                }
+            }
+            
+            if (scheduleHTML) {
+                bodyDiv.innerHTML = scheduleHTML;
+            } else {
+                bodyDiv.innerHTML = '<div class="mobile-detail-empty">일정이 없습니다</div>';
+            }
+            
+            modal.classList.add('show');
+        }
+
+        function closeMobileDetail() {
+            const modal = document.getElementById('mobileDetailModal');
+            modal.classList.remove('show');
+        }
+
+        // 모달 바깥 클릭 시 닫기
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('mobileDetailModal');
+            if (e.target === modal) {
+                closeMobileDetail();
+            }
+        });
 
         // ============================================
         // 유틸리티
