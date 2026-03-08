@@ -1818,7 +1818,7 @@
                     renderCalendar();
                     selectCell(dateStr);
                 } else if (e.ctrlKey && e.key === 'Enter') {
-                    // Ctrl+Enter: 저장하고 다음 셀 (아래)
+                    // Ctrl+Enter: 저장하고 편집 종료
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
                     
@@ -1827,9 +1827,11 @@
                         clearEditingStatus();
                     }
                     
-                    moveToNextCell('down');
+                    // 편집 종료하고 셀 선택 유지
+                    renderCalendar();
+                    selectCell(dateStr);
                 } else if (e.key === 'Tab' && !e.shiftKey) {
-                    // Tab: 다음 셀 (오른쪽)
+                    // Tab: 저장하고 다음 셀로 이동 후 바로 편집
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
                     
@@ -1838,9 +1840,24 @@
                         clearEditingStatus();
                     }
                     
-                    moveToNextCell('right');
+                    // 다음 셀로 이동
+                    const currentDate = new Date(dateStr);
+                    const nextDate = new Date(currentDate);
+                    nextDate.setDate(nextDate.getDate() + 1);
+                    const nextDateStr = formatDateKey(nextDate);
+                    const nextCell = document.querySelector(`[data-date="${nextDateStr}"]`);
+                    
+                    if (nextCell) {
+                        renderCalendar();
+                        selectCell(nextDateStr);
+                        nextCell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        // 약간의 딜레이 후 편집 모드로
+                        setTimeout(() => {
+                            editCellDirect(nextDateStr, nextCell);
+                        }, 50);
+                    }
                 } else if (e.key === 'Tab' && e.shiftKey) {
-                    // Shift+Tab: 이전 셀 (왼쪽)
+                    // Shift+Tab: 저장하고 이전 셀로 이동 후 바로 편집
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
                     
@@ -1849,7 +1866,22 @@
                         clearEditingStatus();
                     }
                     
-                    moveToNextCell('left');
+                    // 이전 셀로 이동
+                    const currentDate = new Date(dateStr);
+                    const prevDate = new Date(currentDate);
+                    prevDate.setDate(prevDate.getDate() - 1);
+                    const prevDateStr = formatDateKey(prevDate);
+                    const prevCell = document.querySelector(`[data-date="${prevDateStr}"]`);
+                    
+                    if (prevCell) {
+                        renderCalendar();
+                        selectCell(prevDateStr);
+                        prevCell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        // 약간의 딜레이 후 편집 모드로
+                        setTimeout(() => {
+                            editCellDirect(prevDateStr, prevCell);
+                        }, 50);
+                    }
                 }
             });
         }
