@@ -1202,6 +1202,7 @@
                 <button class="btn" onclick="backupJSON()">💾 JSON 백업</button>
                 <button class="btn" onclick="backupPDF()">📄 PDF 백업</button>
                 <button class="btn" onclick="document.getElementById('restoreFile').click()">📂 복원</button>
+                <button class="btn" onclick="resetAllData()" style="background: #dc3545;">🗑️ 전체 초기화</button>
                 <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="restoreData(event)">
                 <button class="btn add-project-btn" onclick="openAddProjectModal()">+ 프로젝트 추가</button>
             </div>
@@ -2419,8 +2420,17 @@
                     localStorage.setItem('schedules', JSON.stringify(schedules));
                     localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
                     
+                    // Firebase 저장 (추가!)
                     if (useFirebase && db) {
-                        // Firebase 저장
+                        db.ref('projects').set(projects).then(() => {
+                            console.log('✅ Firebase projects 저장 완료');
+                        });
+                        db.ref('schedules').set(schedules).then(() => {
+                            console.log('✅ Firebase schedules 저장 완료');
+                        });
+                        db.ref('confirmedSchedules').set(confirmedSchedules).then(() => {
+                            console.log('✅ Firebase confirmedSchedules 저장 완료');
+                        });
                     }
                     
                     // UI 업데이트
@@ -3016,6 +3026,52 @@
                 
                 alert(`닉네임이 "${trimmedName}"(으)로 변경되었습니다.`);
             }
+        }
+
+        // ============================================
+        // 전체 초기화
+        // ============================================
+
+        function resetAllData() {
+            const confirmMsg = `⚠️⚠️⚠️ 경고 ⚠️⚠️⚠️\n\n모든 데이터를 삭제하고 처음부터 시작합니다.\n\n삭제되는 데이터:\n- 모든 프로젝트\n- 모든 일정\n- 모든 확정 표시\n- localStorage\n- Firebase 데이터\n\n이 작업은 되돌릴 수 없습니다!\n\n정말로 초기화하시겠습니까?`;
+            
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+            
+            if (!confirm('마지막 확인: 백업하셨나요? 정말 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            // localStorage 초기화
+            projects = [];
+            schedules = {};
+            confirmedSchedules = {};
+            
+            localStorage.setItem('projects', JSON.stringify(projects));
+            localStorage.setItem('schedules', JSON.stringify(schedules));
+            localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
+            
+            // Firebase 초기화
+            if (useFirebase && db) {
+                db.ref('projects').remove().then(() => {
+                    console.log('✅ Firebase projects 삭제 완료');
+                });
+                db.ref('schedules').remove().then(() => {
+                    console.log('✅ Firebase schedules 삭제 완료');
+                });
+                db.ref('confirmedSchedules').remove().then(() => {
+                    console.log('✅ Firebase confirmedSchedules 삭제 완료');
+                });
+            }
+            
+            // UI 초기화
+            currentView = 'all';
+            renderProjectTabs();
+            renderCalendar();
+            renderLegend();
+            
+            alert('✅ 전체 초기화 완료!\n\n이제 "+ 프로젝트 추가" 버튼으로 새로 시작하세요.');
         }
 
         // ============================================
