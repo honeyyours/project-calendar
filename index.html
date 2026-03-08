@@ -834,13 +834,15 @@
             .task-item {
                 font-size: 10px !important;
                 line-height: 1.3;
-                padding: 2px 3px !important;
+                padding: 1px 2px !important;
                 margin: 0 !important;
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 border-radius: 2px;
                 display: block !important;
+                border-left: none !important;
+                border: none !important;
             }
 
             /* 최대 3개까지 표시 */
@@ -850,7 +852,7 @@
 
             /* 프로젝트 태그 숨김 (색상으로만 구분) */
             .project-tag {
-                display: none;
+                display: none !important;
             }
 
             /* 더보기 표시 (4개 이상일 때) */
@@ -899,8 +901,8 @@
             }
 
             .legend-color {
-                width: 10px;
-                height: 10px;
+                width: 12px;
+                height: 12px;
             }
 
             /* 모바일 상세 보기 모달 */
@@ -1103,6 +1105,15 @@
             .task-item {
                 font-size: 9px !important;
                 padding: 1px 2px !important;
+            }
+
+            .legend-item {
+                font-size: 9px;
+            }
+
+            .legend-color {
+                width: 10px;
+                height: 10px;
             }
         }
 
@@ -1599,7 +1610,7 @@
 
         function getDaySchedules(dateStr) {
             if (currentView === 'all') {
-                // 전체 뷰: 모든 프로젝트의 일정 표시 (공정별 색상)
+                // 전체 뷰: 모든 프로젝트의 일정 표시 (프로젝트별 색상, 공정만 표시)
                 return projects.map(project => {
                     const scheduleKey = `${project.id}_${dateStr}`;
                     const content = schedules[scheduleKey];
@@ -1608,10 +1619,8 @@
                     const isConfirmed = confirmedSchedules[scheduleKey] === true;
                     const lines = content.split('\n').filter(l => l.trim());
                     return lines.map(line => {
-                        const process = detectProcess(line);
                         return `
-                            <div class="task-item process-${process} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}">
-                                <span class="project-tag" style="background: rgba(0,0,0,0.1);">${project.name}</span>
+                            <div class="task-item project-color-${project.color} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}: ${line}">
                                 ${line}
                             </div>
                         `;
@@ -2236,7 +2245,16 @@
             ];
             
             if (currentView === 'all') {
-                // 전체 뷰: 공정별 범례
+                // 전체 뷰: 프로젝트별 범례 (모바일 최적화)
+                const projectItems = projects.map(p => 
+                    `<div class="legend-color project-color-${p.color}"></div><span>${p.name}</span>`
+                );
+                
+                legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
+                    `<div class="legend-item">${item}</div>`
+                ).join('');
+            } else {
+                // 개별 프로젝트 뷰: 공정별 범례
                 const processItems = [
                     '<div class="legend-color process-철거"></div><span>철거</span>',
                     '<div class="legend-color process-목공"></div><span>목공</span>',
@@ -2250,15 +2268,6 @@
                 ];
                 
                 legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
-                    `<div class="legend-item">${item}</div>`
-                ).join('');
-            } else {
-                // 개별 프로젝트 뷰: 프로젝트별 범례
-                const projectItems = projects.map(p => 
-                    `<div class="legend-color project-color-${p.color}"></div><span>${p.name}</span>`
-                );
-                
-                legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
                     `<div class="legend-item">${item}</div>`
                 ).join('');
             }
@@ -2456,7 +2465,7 @@
             let scheduleHTML = '';
             
             if (currentView === 'all') {
-                // 전체 뷰: 모든 프로젝트의 일정
+                // 전체 뷰: 모든 프로젝트의 일정 (프로젝트별 색상 + 프로젝트명: 공정)
                 projects.forEach(project => {
                     const scheduleKey = `${project.id}_${dateStr}`;
                     const content = schedules[scheduleKey];
@@ -2464,11 +2473,9 @@
                         const isConfirmed = confirmedSchedules[scheduleKey] === true;
                         const lines = content.split('\n').filter(l => l.trim());
                         lines.forEach(line => {
-                            const process = detectProcess(line);
                             scheduleHTML += `
-                                <div class="task-item process-${process} ${isConfirmed ? 'confirmed' : ''}">
-                                    <span class="project-tag" style="background: rgba(0,0,0,0.1);">${project.name}</span>
-                                    ${line}
+                                <div class="task-item project-color-${project.color} ${isConfirmed ? 'confirmed' : ''}">
+                                    <strong>${project.name}:</strong> ${line}
                                 </div>
                             `;
                         });
