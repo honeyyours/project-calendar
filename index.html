@@ -787,9 +787,9 @@
 
             /* 셀 스타일 (네이버처럼 작고 깔끔하게) */
             .day-cell {
-                min-height: 55px;
-                max-height: 55px;
-                padding: 4px 2px;
+                min-height: 75px;
+                max-height: 75px;
+                padding: 3px 2px;
                 border-right: 1px solid #e5e7eb;
                 border-bottom: 1px solid #e5e7eb;
                 overflow: hidden;
@@ -802,10 +802,12 @@
             }
 
             .day-date {
-                font-size: 12px;
-                font-weight: 500;
-                margin-bottom: 2px;
+                font-size: 10px;
+                font-weight: 600;
+                margin-bottom: 1px;
                 text-align: center;
+                line-height: 1;
+                padding: 2px 0;
             }
 
             .day-date[data-day-name="일"] {
@@ -830,9 +832,9 @@
             }
 
             .task-item {
-                font-size: 9px !important;
-                line-height: 1.2;
-                padding: 1px 3px !important;
+                font-size: 10px !important;
+                line-height: 1.3;
+                padding: 2px 3px !important;
                 margin: 0 !important;
                 white-space: nowrap;
                 overflow: hidden;
@@ -841,8 +843,8 @@
                 display: block !important;
             }
 
-            /* 최대 2개만 표시 */
-            .task-item:nth-child(n+3) {
+            /* 최대 3개까지 표시 */
+            .task-item:nth-child(n+4) {
                 display: none !important;
             }
 
@@ -851,24 +853,23 @@
                 display: none;
             }
 
-            /* 더보기 표시 */
+            /* 더보기 표시 (4개 이상일 때) */
             .day-cell.has-more .day-content::after {
                 content: '...';
-                font-size: 10px;
+                font-size: 9px;
                 color: #999;
                 text-align: center;
                 font-weight: bold;
-                margin-top: 1px;
+                line-height: 1;
             }
 
             /* 확정 표시는 작은 점으로 */
-            .day-cell.confirmed::before {
+            .day-cell.confirmed .day-date::after {
                 content: '●';
-                position: absolute;
-                top: 2px;
-                right: 2px;
-                font-size: 8px;
+                margin-left: 2px;
+                font-size: 6px;
                 color: #10b981;
+                vertical-align: super;
             }
 
             /* 오늘 강조 */
@@ -1052,26 +1053,26 @@
         /* 태블릿 */
         @media (min-width: 769px) and (max-width: 1024px) {
             .calendar-body {
-                grid-template-columns: repeat(7, minmax(100px, 1fr));
+                grid-template-columns: repeat(7, minmax(110px, 1fr));
             }
 
             .day-cell {
-                min-height: 90px;
+                min-height: 100px;
             }
 
             .task-item {
-                font-size: 11px !important;
+                font-size: 12px !important;
             }
 
             .project-info {
-                padding: 14px 18px;
+                padding: 16px;
             }
         }
 
         /* 작은 스마트폰 */
         @media (max-width: 375px) {
             .header h1 {
-                font-size: 15px;
+                font-size: 14px;
             }
 
             .btn {
@@ -1080,26 +1081,28 @@
             }
 
             .tab {
-                padding: 6px 10px;
-                font-size: 11px;
+                padding: 6px 8px;
+                font-size: 10px;
             }
 
             .project-info-title {
-                font-size: 13px;
+                font-size: 12px;
             }
 
             .day-cell {
-                min-height: 50px;
-                max-height: 50px;
-                padding: 3px 1px;
+                min-height: 65px;
+                max-height: 65px;
+                padding: 2px 1px;
             }
 
             .day-date {
-                font-size: 11px;
+                font-size: 9px;
+                padding: 1px 0;
             }
 
             .task-item {
-                font-size: 8px !important;
+                font-size: 9px !important;
+                padding: 1px 2px !important;
             }
         }
 
@@ -1556,7 +1559,7 @@
             bodyContainer.innerHTML = cells.join('');
         }
 
-        // 일정이 3개 이상인지 체크 (2개까지는 보임)
+        // 일정이 4개 이상인지 체크 (3개까지는 보임)
         function checkHasMore(dateStr) {
             if (currentView === 'all') {
                 let count = 0;
@@ -1568,13 +1571,13 @@
                         count += lines.length;
                     }
                 });
-                return count > 2;
+                return count > 3;
             } else {
                 const scheduleKey = `${currentView}_${dateStr}`;
                 const content = schedules[scheduleKey];
                 if (content) {
                     const lines = content.split('\n').filter(l => l.trim());
-                    return lines.length > 2;
+                    return lines.length > 3;
                 }
                 return false;
             }
