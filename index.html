@@ -301,11 +301,11 @@
         }
 
         .day-cell.confirmed {
-            background: #dcfce7 !important;
+            background: #fef3c7 !important;
         }
 
         .day-cell.confirmed.today {
-            background: #fef3c7 !important;
+            background: #fde68a !important;
         }
 
         .day-cell.selected {
@@ -506,22 +506,12 @@
         .project-color-4 { background: #e0e7ff; border-left-color: #6366f1; color: #3730a3; }
         .project-color-5 { background: #fecaca; border-left-color: #ef4444; color: #991b1b; }
 
-        /* 공정별 색상 (전체 뷰용) */
-        .process-철거 { background: #fee2e2; border-left-color: #dc2626; color: #7f1d1d; }
+        /* 공정별 색상 (전체 뷰용) - 주요 공정만 */
         .process-목공 { background: #fef3c7; border-left-color: #f59e0b; color: #78350f; }
         .process-전기 { background: #dbeafe; border-left-color: #3b82f6; color: #1e3a8a; }
-        .process-타일 { background: #e0e7ff; border-left-color: #6366f1; color: #312e81; }
-        .process-페인트 { background: #f3e8ff; border-left-color: #a855f7; color: #581c87; }
         .process-필름 { background: #fce7f3; border-left-color: #ec4899; color: #831843; }
-        .process-가구 { background: #fed7aa; border-left-color: #ea580c; color: #7c2d12; }
-        .process-도배 { background: #ccfbf1; border-left-color: #14b8a6; color: #134e4a; }
-        .process-미장 { background: #e5e7eb; border-left-color: #6b7280; color: #1f2937; }
-        .process-방수 { background: #dbeafe; border-left-color: #0ea5e9; color: #0c4a6e; }
-        .process-설비 { background: #d1fae5; border-left-color: #10b981; color: #064e3b; }
-        .process-청소 { background: #e0f2fe; border-left-color: #0284c7; color: #075985; }
-        .process-보양 { background: #fef9c3; border-left-color: #eab308; color: #713f12; }
-        .process-마감 { background: #ddd6fe; border-left-color: #8b5cf6; color: #4c1d95; }
-        .process-default { background: #f3f4f6; border-left-color: #9ca3af; color: #374151; }
+        .process-기타 { background: #f5f5f5; border-left-color: #9ca3af; color: #374151; }
+        .process-default { background: #f5f5f5; border-left-color: #9ca3af; color: #374151; }
 
         .legend {
             display: flex;
@@ -1000,6 +990,35 @@
                 font-size: 14px;
             }
 
+            .mobile-detail-footer {
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid #e5e7eb;
+            }
+
+            .mobile-confirm-btn {
+                width: 100%;
+                padding: 14px;
+                background: #fbbf24;
+                color: #78350f;
+                border: none;
+                border-radius: 10px;
+                font-size: 15px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+
+            .mobile-confirm-btn:active {
+                transform: scale(0.98);
+                background: #f59e0b;
+            }
+
+            .mobile-confirm-btn.confirmed {
+                background: #fef3c7;
+                border: 2px solid #fbbf24;
+            }
+
             /* 프로젝트 추가 모달 */
             .modal-content {
                 width: 95%;
@@ -1215,6 +1234,11 @@
                 <button class="mobile-detail-close" onclick="closeMobileDetail()">✕ 닫기</button>
             </div>
             <div class="mobile-detail-body" id="mobileDetailBody"></div>
+            <div class="mobile-detail-footer" id="mobileDetailFooter" style="display: none;">
+                <button class="mobile-confirm-btn" id="mobileConfirmBtn" onclick="toggleMobileConfirm()">
+                    확정 표시
+                </button>
+            </div>
         </div>
     </div>
 
@@ -2380,7 +2404,7 @@
             
             const commonItems = [
                 '<div class="legend-color" style="background: #fff7ed; border: 1px solid #fed7aa;"></div><span>오늘</span>',
-                '<div class="legend-color" style="background: #dcfce7; border: 1px solid #86efac;"></div><span>확정</span>',
+                '<div class="legend-color" style="background: #fef3c7; border: 1px solid #fde68a;"></div><span>확정</span>',
                 '<div class="legend-color" style="background: #f5f5f5;"></div><span>프로젝트 범위 외</span>'
             ];
             
@@ -2395,17 +2419,12 @@
                         `<div class="legend-item">${item}</div>`
                     ).join('');
                 } else {
-                    // 데스크톱 - 전체 뷰: 공정별 범례
+                    // 데스크톱 - 전체 뷰: 공정별 범례 (주요 공정만)
                     const processItems = [
-                        '<div class="legend-color process-철거"></div><span>철거</span>',
                         '<div class="legend-color process-목공"></div><span>목공</span>',
                         '<div class="legend-color process-전기"></div><span>전기</span>',
-                        '<div class="legend-color process-타일"></div><span>타일</span>',
-                        '<div class="legend-color process-페인트"></div><span>페인트</span>',
                         '<div class="legend-color process-필름"></div><span>필름</span>',
-                        '<div class="legend-color process-가구"></div><span>가구</span>',
-                        '<div class="legend-color process-설비"></div><span>설비</span>',
-                        '<div class="legend-color process-마감"></div><span>마감</span>'
+                        '<div class="legend-color process-기타"></div><span>기타</span>'
                     ];
                     
                     legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
@@ -2414,17 +2433,12 @@
                 }
             } else {
                 if (isMobile) {
-                    // 모바일 - 개별 프로젝트 뷰: 공정별 범례
+                    // 모바일 - 개별 프로젝트 뷰: 공정별 범례 (주요 공정만)
                     const processItems = [
-                        '<div class="legend-color process-철거"></div><span>철거</span>',
                         '<div class="legend-color process-목공"></div><span>목공</span>',
                         '<div class="legend-color process-전기"></div><span>전기</span>',
-                        '<div class="legend-color process-타일"></div><span>타일</span>',
-                        '<div class="legend-color process-페인트"></div><span>페인트</span>',
                         '<div class="legend-color process-필름"></div><span>필름</span>',
-                        '<div class="legend-color process-가구"></div><span>가구</span>',
-                        '<div class="legend-color process-설비"></div><span>설비</span>',
-                        '<div class="legend-color process-마감"></div><span>마감</span>'
+                        '<div class="legend-color process-기타"></div><span>기타</span>'
                     ];
                     
                     legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
@@ -2560,10 +2574,33 @@
             const menu = document.getElementById('contextMenu');
             contextMenuTarget = dateStr;
             
-            // 메뉴 위치 설정
-            menu.style.left = event.pageX + 'px';
-            menu.style.top = event.pageY + 'px';
+            // 메뉴 위치 설정 (화면 경계 체크)
             menu.classList.add('show');
+            
+            // 메뉴 크기 측정
+            const menuWidth = menu.offsetWidth;
+            const menuHeight = menu.offsetHeight;
+            
+            // 뷰포트 크기
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // 마우스 위치
+            let x = event.clientX;
+            let y = event.clientY;
+            
+            // 화면 오른쪽 경계 체크
+            if (x + menuWidth > viewportWidth) {
+                x = viewportWidth - menuWidth - 10;
+            }
+            
+            // 화면 아래쪽 경계 체크
+            if (y + menuHeight > viewportHeight) {
+                y = viewportHeight - menuHeight - 10;
+            }
+            
+            menu.style.left = x + 'px';
+            menu.style.top = y + 'px';
             
             // 현재 확정 상태에 따라 메뉴 항목 표시
             const scheduleKey = `${currentView}_${dateStr}`;
@@ -2623,6 +2660,8 @@
             const modal = document.getElementById('mobileDetailModal');
             const titleDiv = document.getElementById('mobileDetailTitle');
             const bodyDiv = document.getElementById('mobileDetailBody');
+            const footerDiv = document.getElementById('mobileDetailFooter');
+            const confirmBtn = document.getElementById('mobileConfirmBtn');
             
             // 날짜 포맷
             const date = new Date(dateStr);
@@ -2651,10 +2690,14 @@
                         });
                     }
                 });
+                // 전체 뷰에서는 확정 버튼 숨김
+                footerDiv.style.display = 'none';
             } else {
                 // 개별 프로젝트 뷰
                 const scheduleKey = `${currentView}_${dateStr}`;
                 const content = schedules[scheduleKey];
+                const isConfirmed = confirmedSchedules[scheduleKey] === true;
+                
                 if (content) {
                     const project = projects.find(p => p.id === currentView);
                     const lines = content.split('\n').filter(l => l.trim());
@@ -2665,6 +2708,22 @@
                             </div>
                         `;
                     });
+                }
+                
+                // 개별 프로젝트 뷰에서는 확정 버튼 표시
+                if (content) {
+                    footerDiv.style.display = 'block';
+                    confirmBtn.dataset.dateStr = dateStr;
+                    
+                    if (isConfirmed) {
+                        confirmBtn.textContent = '✓ 확정됨 (탭하여 해제)';
+                        confirmBtn.classList.add('confirmed');
+                    } else {
+                        confirmBtn.textContent = '확정 표시';
+                        confirmBtn.classList.remove('confirmed');
+                    }
+                } else {
+                    footerDiv.style.display = 'none';
                 }
             }
             
@@ -2682,6 +2741,37 @@
             modal.classList.remove('show');
         }
 
+        function toggleMobileConfirm() {
+            const confirmBtn = document.getElementById('mobileConfirmBtn');
+            const dateStr = confirmBtn.dataset.dateStr;
+            
+            if (!dateStr || currentView === 'all') return;
+            
+            const scheduleKey = `${currentView}_${dateStr}`;
+            
+            // 토글
+            if (confirmedSchedules[scheduleKey]) {
+                delete confirmedSchedules[scheduleKey];
+                confirmBtn.textContent = '확정 표시';
+                confirmBtn.classList.remove('confirmed');
+            } else {
+                confirmedSchedules[scheduleKey] = true;
+                confirmBtn.textContent = '✓ 확정됨 (탭하여 해제)';
+                confirmBtn.classList.add('confirmed');
+            }
+            
+            // 저장
+            localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
+            
+            // Firebase 저장
+            if (useFirebase && db) {
+                db.ref('confirmedSchedules').set(confirmedSchedules);
+            }
+            
+            // 달력 업데이트 (모달은 유지)
+            renderCalendar();
+        }
+
         // 모달 바깥 클릭 시 닫기
         document.addEventListener('click', function(e) {
             const modal = document.getElementById('mobileDetailModal');
@@ -2694,38 +2784,19 @@
         // 유틸리티
         // ============================================
 
-        // 공정 키워드 감지
+        // 공정 키워드 감지 (목공, 필름, 전기만 색상 표시)
         function detectProcess(text) {
-            const processKeywords = {
-                '철거': '철거',
-                '목공': '목공',
-                '전기': '전기',
-                '타일': '타일',
-                '페인트': '페인트',
-                '필름': '필름',
-                '가구': '가구',
-                '도배': '도배',
-                '미장': '미장',
-                '방수': '방수',
-                '설비': '설비',
-                '에어컨': '설비',
-                '보일러': '설비',
-                '청소': '청소',
-                '보양': '보양',
-                '마감': '마감',
-                '세팅': '마감',
-                '완료': '마감'
-            };
-            
-            const lowerText = text.toLowerCase();
-            
-            for (const [keyword, process] of Object.entries(processKeywords)) {
-                if (text.includes(keyword)) {
-                    return process;
-                }
+            // 주요 공정만 색상 적용
+            if (text.includes('목공')) {
+                return '목공';
+            } else if (text.includes('필름')) {
+                return '필름';
+            } else if (text.includes('전기')) {
+                return '전기';
             }
             
-            return 'default';
+            // 나머지는 기타 (프로젝트 범위 외 색상)
+            return '기타';
         }
 
         function showSaveIndicator(message = '자동 저장됨') {
@@ -3028,14 +3099,25 @@
             
             function renderOnlineUsers() {
                 const userListDiv = document.getElementById('userList');
-                const users = Object.entries(onlineUsers).filter(([id, _]) => id !== currentUser.id);
+                const allUsers = Object.entries(onlineUsers).filter(([id, _]) => id !== currentUser.id);
+                
+                // 중복 제거: 같은 이름의 사용자는 최신 것만 유지
+                const uniqueUsers = new Map();
+                allUsers.forEach(([id, user]) => {
+                    const existingUser = uniqueUsers.get(user.name);
+                    if (!existingUser || id > existingUser.id) {
+                        uniqueUsers.set(user.name, { id, ...user });
+                    }
+                });
+                
+                const users = Array.from(uniqueUsers.values());
                 
                 if (users.length === 0) {
                     userListDiv.innerHTML = '<div style="font-size: 11px; color: #999;">나만 접속 중</div>';
                     return;
                 }
                 
-                userListDiv.innerHTML = users.map(([id, user]) => {
+                userListDiv.innerHTML = users.map(user => {
                     const editing = user.editingCell ? ` (편집 중)` : '';
                     return `
                         <div class="user-item">
