@@ -3105,74 +3105,78 @@
             function setupRealtimeSync() {
                 // 일정 실시간 동기화
                 const schedulesRef = db.ref('schedules');
-                let isFirstLoad = true;
-                schedulesRef.on('value', (snapshot) => {
+                schedulesRef.once('value', (snapshot) => {
                     const firebaseSchedules = snapshot.val() || {};
                     
-                    if (isFirstLoad) {
-                        // 첫 로드: 로컬과 Firebase 데이터 병합 (로컬 우선)
-                        schedules = { ...firebaseSchedules, ...schedules };
-                        isFirstLoad = false;
-                        
-                        // 병합된 데이터를 Firebase에 저장
-                        if (Object.keys(schedules).length > 0) {
-                            db.ref('schedules').set(schedules);
-                        }
-                    } else {
-                        // 이후: Firebase 변경사항 반영
+                    // Firebase 우선: Firebase에 데이터가 있으면 사용
+                    if (Object.keys(firebaseSchedules).length > 0) {
+                        console.log('✅ Firebase에서 일정 데이터 복원:', Object.keys(firebaseSchedules).length, '개');
                         schedules = firebaseSchedules;
+                        localStorage.setItem('schedules', JSON.stringify(schedules));
+                        renderCalendar();
+                    } else if (Object.keys(schedules).length > 0) {
+                        // Firebase 비어있고 로컬에 데이터 있으면 업로드
+                        console.log('📤 로컬 데이터를 Firebase에 업로드');
+                        db.ref('schedules').set(schedules);
                     }
                     
-                    localStorage.setItem('schedules', JSON.stringify(schedules));
-                    renderCalendar();
+                    // 이후 실시간 동기화
+                    schedulesRef.on('value', (snapshot) => {
+                        const updatedSchedules = snapshot.val() || {};
+                        schedules = updatedSchedules;
+                        localStorage.setItem('schedules', JSON.stringify(schedules));
+                        renderCalendar();
+                    });
                 });
                 
                 // 확정 상태 실시간 동기화
                 const confirmedRef = db.ref('confirmedSchedules');
-                let isFirstConfirmedLoad = true;
-                confirmedRef.on('value', (snapshot) => {
+                confirmedRef.once('value', (snapshot) => {
                     const firebaseConfirmed = snapshot.val() || {};
                     
-                    if (isFirstConfirmedLoad) {
-                        // 첫 로드: 로컬과 Firebase 데이터 병합
-                        confirmedSchedules = { ...firebaseConfirmed, ...confirmedSchedules };
-                        isFirstConfirmedLoad = false;
-                        
-                        // 병합된 데이터를 Firebase에 저장
-                        if (Object.keys(confirmedSchedules).length > 0) {
-                            db.ref('confirmedSchedules').set(confirmedSchedules);
-                        }
-                    } else {
-                        // 이후: Firebase 변경사항 반영
+                    if (Object.keys(firebaseConfirmed).length > 0) {
+                        console.log('✅ Firebase에서 확정 데이터 복원:', Object.keys(firebaseConfirmed).length, '개');
                         confirmedSchedules = firebaseConfirmed;
+                        localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
+                        renderCalendar();
+                    } else if (Object.keys(confirmedSchedules).length > 0) {
+                        console.log('📤 로컬 확정 데이터를 Firebase에 업로드');
+                        db.ref('confirmedSchedules').set(confirmedSchedules);
                     }
                     
-                    localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
-                    renderCalendar();
+                    // 이후 실시간 동기화
+                    confirmedRef.on('value', (snapshot) => {
+                        const updatedConfirmed = snapshot.val() || {};
+                        confirmedSchedules = updatedConfirmed;
+                        localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
+                        renderCalendar();
+                    });
                 });
                 
                 // 프로젝트 데이터 동기화
                 const projectsRef = db.ref('projects');
-                let isFirstProjectsLoad = true;
-                projectsRef.on('value', (snapshot) => {
+                projectsRef.once('value', (snapshot) => {
                     const firebaseProjects = snapshot.val() || [];
                     
-                    if (isFirstProjectsLoad) {
-                        // 첫 로드: 로컬 프로젝트 우선
-                        if (projects.length > 0) {
-                            db.ref('projects').set(projects);
-                        } else {
-                            projects = firebaseProjects;
-                        }
-                        isFirstProjectsLoad = false;
-                    } else {
-                        // 이후: Firebase 변경사항 반영
+                    if (firebaseProjects.length > 0) {
+                        console.log('✅ Firebase에서 프로젝트 데이터 복원:', firebaseProjects.length, '개');
                         projects = firebaseProjects;
+                        localStorage.setItem('projects', JSON.stringify(projects));
+                        renderProjectTabs();
+                        renderLegend();
+                    } else if (projects.length > 0) {
+                        console.log('📤 로컬 프로젝트를 Firebase에 업로드');
+                        db.ref('projects').set(projects);
                     }
                     
-                    localStorage.setItem('projects', JSON.stringify(projects));
-                    renderProjectTabs();
-                    renderLegend();
+                    // 이후 실시간 동기화
+                    projectsRef.on('value', (snapshot) => {
+                        const updatedProjects = snapshot.val() || [];
+                        projects = updatedProjects;
+                        localStorage.setItem('projects', JSON.stringify(projects));
+                        renderProjectTabs();
+                        renderLegend();
+                    });
                 });
             }
             
