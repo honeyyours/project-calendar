@@ -680,22 +680,242 @@
             background: rgba(239, 68, 68, 0.3);
         }
 
+        /* 모바일 반응형 */
         @media (max-width: 768px) {
-            .calendar-body {
-                grid-template-columns: 1fr;
+            body {
+                padding: 0;
+            }
+
+            .container {
+                border-radius: 0;
+            }
+
+            .header {
+                padding: 16px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .controls {
+                width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .project-tabs {
+                padding: 0 12px;
+                gap: 4px;
+            }
+
+            .tab {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .calendar-wrapper {
+                padding: 12px;
+            }
+
+            .project-info {
+                flex-direction: column;
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .project-info-title {
+                font-size: 16px;
+            }
+
+            .project-info-dates {
+                font-size: 12px;
+            }
+
+            .project-info-right {
+                padding: 10px 12px;
+            }
+
+            .project-detail-item {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+
+            .project-detail-label {
+                width: 70px;
+                font-size: 11px;
             }
 
             .calendar-header {
                 display: none;
             }
 
+            .calendar-body {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
             .day-cell {
-                border-right: none;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                min-height: 80px;
+                padding: 8px;
+            }
+
+            .day-cell:nth-child(7n) {
+                border-right: 1px solid #ddd;
+            }
+
+            .day-date {
+                font-size: 13px;
+                margin-bottom: 6px;
             }
 
             .day-date::before {
                 content: attr(data-day-name) ' ';
                 font-weight: 600;
+                color: #667eea;
+            }
+
+            .task-item {
+                font-size: 11px !important;
+                padding: 4px 6px;
+                margin: 3px 0;
+            }
+
+            .task-item.large {
+                font-size: 12px !important;
+            }
+
+            .project-tag {
+                font-size: 9px;
+            }
+
+            .legend {
+                padding: 10px 12px;
+                flex-wrap: wrap;
+            }
+
+            .legend-item {
+                font-size: 11px;
+            }
+
+            .legend-color {
+                width: 14px;
+                height: 14px;
+            }
+
+            /* 모달 */
+            .modal-content {
+                width: 95%;
+                max-width: 400px;
+                padding: 20px;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            .modal-content h2 {
+                font-size: 18px;
+            }
+
+            .form-group label {
+                font-size: 13px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            /* 온라인 사용자 목록 숨기기 */
+            .online-users {
+                display: none !important;
+            }
+
+            /* 컨텍스트 메뉴 */
+            .context-menu {
+                min-width: 120px;
+            }
+
+            .context-menu-item {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            /* 편집 textarea */
+            .edit-textarea {
+                font-size: 14px;
+                min-height: 60px;
+            }
+
+            /* 저장 인디케이터 */
+            .save-indicator {
+                bottom: 10px;
+                right: 10px;
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+
+            /* 마지막 저장 시간 */
+            .last-saved {
+                font-size: 10px;
+            }
+        }
+
+        /* 태블릿 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .calendar-body {
+                grid-template-columns: repeat(7, minmax(100px, 1fr));
+            }
+
+            .day-cell {
+                min-height: 90px;
+            }
+
+            .task-item {
+                font-size: 11px !important;
+            }
+
+            .project-info {
+                padding: 14px 18px;
+            }
+        }
+
+        /* 작은 스마트폰 */
+        @media (max-width: 375px) {
+            .header h1 {
+                font-size: 16px;
+            }
+
+            .btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .tab {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .project-info-title {
+                font-size: 15px;
+            }
+
+            .day-cell {
+                min-height: 70px;
+                padding: 6px;
+            }
+
+            .task-item {
+                font-size: 10px !important;
             }
         }
 
