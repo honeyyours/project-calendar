@@ -34,8 +34,9 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #f5f5f5;
+            background: #f9fafb;
             padding: 20px;
+            font-size: 16px;
         }
 
         .container {
@@ -48,17 +49,225 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 24px;
+            background: white;
+            color: #1e2028;
+            padding: 20px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #e5e7eb;
         }
 
         .header h1 {
             font-size: 24px;
+            font-weight: 700;
+            color: #1e2028;
+            letter-spacing: -0.5px;
+        }
+
+        .settings-icon-btn {
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            font-size: 26px;
+            color: #9ca3af;
+            border: none !important;
+            background: transparent !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            line-height: 1;
+        }
+
+        .settings-icon-btn:hover {
+            background: #f3f4f6 !important;
+            border: none !important;
+            color: #4b5060;
+        }
+
+        /* 설정 드롭다운 */
+        .settings-dropdown {
+            position: relative;
+        }
+
+
+        .settings-menu-info {
+            padding: 10px 16px;
+        }
+
+        .settings-menu-info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 3px 0;
+        }
+
+        .settings-menu-info-label {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .settings-menu-info-value {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .settings-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            min-width: 180px;
+            z-index: 10000;
+            padding: 6px 0;
+            animation: fadeInDown 0.15s ease;
+        }
+
+        .settings-menu.show {
+            display: block;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .settings-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #1e2028;
+            transition: background 0.15s;
+        }
+
+        .settings-menu-item:hover {
+            background: #f3f4f6;
+        }
+
+        .settings-menu-item.danger {
+            color: #c0392b;
+        }
+
+        .settings-menu-item.danger:hover {
+            background: #f3f4f6;
+        }
+
+        .settings-menu-icon {
+            font-size: 15px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .settings-menu-arrow {
+            margin-left: auto;
+            font-size: 16px;
+            color: #aaaaaa;
+        }
+
+        .settings-menu-divider {
+            height: 1px;
+            background: #e5e7eb;
+            margin: 4px 0;
+        }
+
+        /* 백업 팝업 */
+        .backup-popup-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            z-index: 20000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .backup-popup-overlay.show {
+            display: flex;
+        }
+
+        .backup-popup {
+            background: white;
+            border-radius: 16px;
+            padding: 28px 24px 20px;
+            width: 320px;
+            box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+            animation: fadeInDown 0.2s ease;
+        }
+
+        .backup-popup-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #1e2028;
+            margin-bottom: 6px;
+        }
+
+        .backup-popup-desc {
+            font-size: 13px;
+            color: #9ca3af;
+            margin-bottom: 20px;
+        }
+
+        .backup-popup-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .backup-option {
+            flex: 1;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 16px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .backup-option:hover {
+            border-color: #F06840;
+            background: #FEF0EB;
+        }
+
+        .backup-option-icon {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .backup-option-label {
+            font-size: 14px;
             font-weight: 600;
+            color: #1e2028;
+            margin-bottom: 4px;
+        }
+
+        .backup-option-desc {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .backup-popup-cancel {
+            width: 100%;
+            padding: 10px;
+            background: #f9fafb;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .backup-popup-cancel:hover {
+            background: #e5e7eb;
         }
 
         .controls {
@@ -68,9 +277,9 @@
         }
 
         .btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
+            background: white;
+            border: 1px solid #e5e7eb;
+            color: #4b5060;
             padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
@@ -79,49 +288,50 @@
         }
 
         .btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: #f3f4f6;
+            border-color: #bbbbbb;
         }
 
         .project-tabs {
             display: flex;
             padding: 0 24px;
             gap: 8px;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e5e7eb;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .project-tabs::-webkit-scrollbar {
+            display: none;
         }
 
         .tab {
             padding: 12px 20px;
             cursor: pointer;
             border-bottom: 3px solid transparent;
-            color: #666;
-            font-weight: 500;
+            color: #6b7280;
+            font-weight: 400;
             white-space: nowrap;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 15px;
         }
 
         .tab:hover {
-            color: #333;
-            background: #f9f9f9;
+            color: #1e2028;
+            background: #f3f4f6;
         }
 
         .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-        }
-
-        .tab.all-projects {
+            color: #F06840;
+            border-bottom-color: #F06840;
             font-weight: 600;
-            color: #764ba2;
         }
 
-        .tab.all-projects.active {
-            color: #764ba2;
-            border-bottom-color: #764ba2;
-        }
+
 
         .tab-edit-btn {
             opacity: 0;
@@ -148,7 +358,7 @@
         }
 
         .project-info {
-            background: #f8f9fa;
+            background: #f9fafb;
             padding: 16px 20px;
             border-radius: 8px;
             margin-bottom: 20px;
@@ -159,37 +369,55 @@
         }
 
         .project-info.all-view {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            background: #f9fafb;
         }
 
         .project-info-left {
             flex: 1;
+            min-width: 0;
         }
 
         .project-info-title {
             font-size: 18px;
             font-weight: 600;
-            color: #333;
-            margin-bottom: 4px;
+            color: #1e2028;
+            margin-bottom: 14px;
         }
 
         .project-info-dates {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 8px;
+            display: none;
         }
 
         .project-info-right {
-            flex: 1.5;
-            background: white;
-            padding: 12px 16px;
-            border-radius: 6px;
-            border: 1px solid #e0e0e0;
+            display: none;
         }
 
         .project-detail-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0;
+            font-size: 14px;
             margin-bottom: 8px;
-            font-size: 13px;
+        }
+
+        .project-detail-label {
+            font-size: 14px;
+            font-weight: 400;
+            color: #6b7280;
+            width: 76px;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .project-detail-sep {
+            color: transparent;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        .project-detail-item:last-of-type {
+            margin-bottom: 0;
         }
 
         .project-detail-item:last-child {
@@ -197,63 +425,65 @@
         }
 
         .project-detail-label {
-            font-weight: 600;
-            color: #555;
+            font-weight: 400;
+            color: #6b7280;
             display: inline-block;
             width: 80px;
         }
 
         .project-detail-value {
-            color: #333;
+            color: #1e2028;
         }
 
         .project-detail-value.empty {
-            color: #999;
+            color: #d1d5db;
             font-style: italic;
         }
 
         .project-detail-password {
             font-family: monospace;
-            background: #f5f5f5;
+            background: #f9fafb;
             padding: 2px 6px;
             border-radius: 3px;
             letter-spacing: 1px;
         }
 
         .project-info-edit-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 6px 12px;
+            background: white;
+            color: #4b5060;
+            border: 1px solid #e5e7eb;
+            padding: 6px 12px 6px 8px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
             margin-top: 8px;
         }
 
         .project-info-edit-btn:hover {
-            background: #5568d3;
+            background: #f3f4f6;
         }
 
         .calendar {
             border: 1px solid #ddd;
             border-radius: 8px;
             overflow: hidden;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
         }
 
         .calendar-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            background: #f8f9fa;
+            display: contents;
         }
 
         .day-header {
             padding: 12px;
             text-align: center;
             font-weight: 600;
-            color: #555;
+            color: #4b5060;
             border-right: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background: #f9fafb;
             font-size: 14px;
         }
 
@@ -262,18 +492,20 @@
         }
 
         .day-header.weekend {
-            color: #e53e3e;
+            color: #E03E3E;
         }
 
         .calendar-body {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            grid-auto-rows: auto;
+            display: contents;
         }
 
         .day-cell {
             border-right: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
+        }
+
+        .day-cell.last-row {
+            border-bottom: none;
             min-height: 100px;
             background: white;
             transition: background 0.2s;
@@ -288,50 +520,64 @@
         }
 
         .day-cell:hover:not(.today) {
-            background: #f9fafb;
+            background: #f3f4f6;
         }
 
         .day-cell.today {
-            background: #fff7ed !important;
-            box-shadow: inset 0 0 0 3px #f97316 !important;
             position: relative !important;
             z-index: 1 !important;
         }
 
         .day-cell.out-of-range {
-            background: #f5f5f5 !important;
-            opacity: 0.5;
+            background: #fcfcfc !important;
         }
 
-        /* 오늘 날짜가 범위 밖이어도 테두리 유지 */
+        .day-cell.out-of-range .day-date,
+        .day-cell.out-of-range .task-item {
+            opacity: 0.4;
+        }
+
+        /* 오늘 날짜가 범위 밖이어도 표시 유지 */
         .day-cell.today.out-of-range {
-            background: #fff7ed !important;
-            box-shadow: inset 0 0 0 3px #f97316 !important;
             opacity: 1 !important;
             z-index: 2 !important;
         }
 
         .day-cell.confirmed {
-            background: #fef3c7 !important;
+            background: #FEFCE8 !important;
         }
 
         .day-cell.confirmed.today {
-            background: #fde68a !important;
-            box-shadow: inset 0 0 0 3px #f97316 !important;
             z-index: 2 !important;
         }
 
+
+
+
+        .today-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 9px;
+            font-weight: 600;
+            color: #F06840;
+            border: 1px solid #F06840;
+            border-radius: 20px;
+            padding: 1px 5px;
+            margin-left: 5px;
+            line-height: 1.4;
+            vertical-align: middle;
+        }
         .day-cell.selected {
-            outline: 3px solid #667eea;
+            outline: 3px solid #F06840;
             outline-offset: -3px;
             z-index: 10;
         }
 
         .day-date {
             padding: 8px;
-            font-size: 13px;
-            color: #666;
-            font-weight: 500;
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 300;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -340,29 +586,54 @@
 
         /* 공휴일 날짜 색상 (빨간색) */
         .day-date.holiday-date {
-            color: #ef4444;
-            font-weight: 600;
+            color: #E03E3E;
+            font-weight: 300;
         }
 
         /* 토요일 날짜 색상 (파란색) */
         .day-date.saturday-date {
             color: #3b82f6;
-            font-weight: 600;
+            font-weight: 300;
         }
 
         .day-content {
             padding: 4px 8px;
-            font-size: 12px;
+            font-size: 14px;
             line-height: 1.6;
             flex-grow: 1;
             overflow: visible;
         }
 
+
+
+        .project-tag-0 { background: #bfdbfe; color: #1e40af; }
+        .project-tag-1 { background: #fbcfe8; color: #9f1239; }
+        .project-tag-2 { background: #a7f3d0; color: #065f46; }
+        .project-tag-3 { background: #e9d5ff; color: #6b21a8; }
+        .project-tag-4 { background: #c7d2fe; color: #3730a3; }
+        .project-tag-5 { background: #fca5a5; color: #991b1b; }
+
+        .project-tag {
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 20px;
+            margin-right: 4px;
+            font-weight: 500;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .process-tag-목공 { background: #fde68a; color: #78350f; }
+        .process-tag-전기 { background: #bae6fd; color: #1e40af; }
+        .process-tag-필름 { background: #fad4e8; color: #831843; }
+        .process-tag-기타 { background: #e5e7eb; color: #4b5060; }
+        .process-tag-default { background: #e5e7eb; color: #4b5060; }
+
         .task-item {
             padding: 4px 8px;
             margin: 3px 0;
             border-radius: 3px;
-            font-size: 11px;
+            font-size: 13px;
             border-left: 3px solid;
             cursor: pointer;
             transition: all 0.2s;
@@ -370,7 +641,7 @@
         }
 
         .task-item.large {
-            font-size: 13px;
+            font-size: 15px;
             padding: 6px 10px;
             margin: 4px 0;
         }
@@ -385,15 +656,15 @@
         }
 
         .task-item.confirmed {
-            font-weight: bold;
+            font-weight: 400;
         }
 
         .edit-textarea {
             width: 100%;
             min-height: 80px;
-            border: 2px solid #667eea;
+            border: 2px solid #F06840;
             padding: 8px;
-            font-size: 13px;
+            font-size: 15px;
             resize: vertical;
             border-radius: 4px;
             font-family: inherit;
@@ -401,7 +672,7 @@
 
         .edit-textarea:focus {
             outline: none;
-            border-color: #5568d3;
+            border-color: #D95A35;
         }
 
         .context-menu {
@@ -423,7 +694,7 @@
         .context-menu-item {
             padding: 10px 16px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 15px;
             transition: background 0.2s;
         }
 
@@ -432,7 +703,7 @@
         }
 
         .context-menu-item.danger {
-            color: #dc2626;
+            color: #E03E3E;
         }
 
         .context-menu-item.success {
@@ -455,7 +726,7 @@
         .online-users h3 {
             font-size: 13px;
             margin-bottom: 8px;
-            color: #666;
+            color: #6b7280;
             font-weight: 600;
         }
 
@@ -517,21 +788,21 @@
         .project-color-2 { background: #d1fae5; border-left-color: #10b981; color: #065f46; }
         .project-color-3 { background: #f3e8ff; border-left-color: #a855f7; color: #6b21a8; }
         .project-color-4 { background: #e0e7ff; border-left-color: #6366f1; color: #3730a3; }
-        .project-color-5 { background: #fecaca; border-left-color: #ef4444; color: #991b1b; }
+        .project-color-5 { background: #fecaca; border-left-color: #E03E3E; color: #991b1b; }
 
         /* 공정별 색상 (전체 뷰용) - 주요 공정만 */
-        .process-목공 { background: #fef3c7; border-left-color: #f59e0b; color: #78350f; }
-        .process-전기 { background: #dbeafe; border-left-color: #3b82f6; color: #1e3a8a; }
+        .process-목공 { background: #fef9c3; border-left-color: #f59e0b; color: #78350f; }
+        .process-전기 { background: #e0f2fe; border-left-color: #3b82f6; color: #1e40af; }
         .process-필름 { background: #fce7f3; border-left-color: #ec4899; color: #831843; }
-        .process-기타 { background: #f5f5f5; border-left-color: #9ca3af; color: #374151; }
-        .process-default { background: #f5f5f5; border-left-color: #9ca3af; color: #374151; }
+        .process-기타 { background: #f3f4f6; border-left-color: #9ca3af; color: #4b5060; }
+        .process-default { background: #f3f4f6; border-left-color: #9ca3af; color: #4b5060; }
 
         .legend {
             display: flex;
             gap: 16px;
             padding: 16px 24px;
             background: #f9fafb;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid #e5e7eb;
             flex-wrap: wrap;
         }
 
@@ -539,13 +810,14 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 13px;
+            font-size: 15px;
         }
 
         .legend-color {
             width: 16px;
             height: 16px;
             border-radius: 3px;
+            flex-shrink: 0;
         }
 
         .save-indicator {
@@ -557,7 +829,7 @@
             padding: 12px 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 500;
             opacity: 0;
             transform: translateY(20px);
@@ -599,7 +871,9 @@
 
         .modal-content h2 {
             margin-bottom: 20px;
-            color: #333;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e2028;
         }
 
         .form-group {
@@ -609,8 +883,9 @@
         .form-group label {
             display: block;
             margin-bottom: 6px;
+            font-size: 13px;
             font-weight: 500;
-            color: #555;
+            color: #4b5060;
         }
 
         .form-group input, .form-group textarea {
@@ -634,7 +909,7 @@
 
         .form-actions button {
             flex: 1;
-            padding: 12px;
+            padding: 10px;
             border: none;
             border-radius: 6px;
             font-size: 14px;
@@ -644,17 +919,17 @@
         }
 
         .btn-primary {
-            background: #667eea;
+            background: #F06840;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #5568d3;
+            background: #D95A35;
         }
 
         .btn-secondary {
             background: #e5e7eb;
-            color: #374151;
+            color: #4b5060;
         }
 
         .btn-secondary:hover {
@@ -662,37 +937,42 @@
         }
 
         .btn-danger {
-            background: #ef4444;
+            background: #E03E3E;
             color: white;
         }
 
         .btn-danger:hover {
-            background: #dc2626;
+            background: #C53030;
         }
 
         .add-project-btn {
-            background: white;
-            color: #667eea;
-            border: 2px solid white;
+            background: #F06840;
+            color: white;
+            border: 2px solid #F06840;
+            font-weight: 600;
         }
 
         .add-project-btn:hover {
-            background: rgba(255,255,255,0.9);
+            background: #D95A35;
+            border-color: #D95A35;
         }
 
         .firebase-status {
             font-size: 12px;
             padding: 4px 8px;
             border-radius: 4px;
-            background: rgba(255,255,255,0.2);
+            background: #f3f4f6;
+            color: #9ca3af;
         }
 
         .firebase-status.connected {
-            background: rgba(16, 185, 129, 0.3);
+            background: #d1fae5;
+            color: #065f46;
         }
 
         .firebase-status.disconnected {
-            background: rgba(239, 68, 68, 0.3);
+            background: #fee2e2;
+            color: #991b1b;
         }
 
         /* 모바일 반응형 */
@@ -712,7 +992,7 @@
             }
 
             .header h1 {
-                font-size: 16px;
+                font-size: 18px;
             }
 
             .controls {
@@ -786,7 +1066,7 @@
 
             .calendar-header {
                 grid-template-columns: repeat(7, 1fr);
-                background: #f8f9fa;
+                background: #f9fafb;
             }
 
             .calendar-header div {
@@ -839,7 +1119,32 @@
                 padding: 0 1px;
             }
 
-            .task-item {
+    
+
+        .project-tag-0 { background: #bfdbfe; color: #1e40af; }
+        .project-tag-1 { background: #fbcfe8; color: #9f1239; }
+        .project-tag-2 { background: #a7f3d0; color: #065f46; }
+        .project-tag-3 { background: #e9d5ff; color: #6b21a8; }
+        .project-tag-4 { background: #c7d2fe; color: #3730a3; }
+        .project-tag-5 { background: #fca5a5; color: #991b1b; }
+
+        .project-tag {
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 20px;
+            margin-right: 4px;
+            font-weight: 500;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .process-tag-목공 { background: #fde68a; color: #78350f; }
+        .process-tag-전기 { background: #bae6fd; color: #1e40af; }
+        .process-tag-필름 { background: #fad4e8; color: #831843; }
+        .process-tag-기타 { background: #e5e7eb; color: #4b5060; }
+        .process-tag-default { background: #e5e7eb; color: #4b5060; }
+
+        .task-item {
                 font-size: 10px !important;
                 line-height: 1.3;
                 padding: 1px 2px 1px 0 !important;
@@ -859,7 +1164,15 @@
             }
 
             /* 프로젝트 태그 숨김 (색상으로만 구분) */
-            .project-tag {
+    
+        .project-tag-0 { background: #bfdbfe; color: #1e40af; }
+        .project-tag-1 { background: #fbcfe8; color: #9f1239; }
+        .project-tag-2 { background: #a7f3d0; color: #065f46; }
+        .project-tag-3 { background: #e9d5ff; color: #6b21a8; }
+        .project-tag-4 { background: #c7d2fe; color: #3730a3; }
+        .project-tag-5 { background: #fca5a5; color: #991b1b; }
+
+        .project-tag {
                 display: none !important;
             }
 
@@ -867,7 +1180,7 @@
             .day-cell.has-more .day-content::after {
                 content: '...';
                 font-size: 9px;
-                color: #999;
+                color: #d1d5db;
                 text-align: center;
                 font-weight: bold;
                 line-height: 1;
@@ -884,37 +1197,24 @@
 
             /* 모바일 확정 셀 */
             .day-cell.confirmed {
-                background: #fef3c7 !important;
+                background: #FEFCE8 !important;
             }
 
             /* 모바일 확정된 오늘 날짜 */
-            .day-cell.confirmed.today {
-                background: #fde68a !important;
-                box-shadow: inset 0 0 0 2px #f97316 !important;
-            }
-
             /* 오늘 강조 */
             .day-cell.today {
-                background: #fef3c7 !important;
-                box-shadow: inset 0 0 0 2px #f97316 !important;
                 z-index: 1 !important;
             }
 
-            .day-cell.today .day-date {
-                color: #f59e0b !important;
-                font-weight: 700 !important;
-            }
+
 
             /* 범위 밖 */
             .day-cell.out-of-range {
-                background: #f9fafb !important;
-                opacity: 0.6;
+                background: #fcfcfc !important;
             }
 
             /* 오늘 날짜가 범위 밖이어도 테두리 유지 */
             .day-cell.today.out-of-range {
-                background: #fef3c7 !important;
-                box-shadow: inset 0 0 0 2px #f97316 !important;
                 opacity: 1 !important;
                 z-index: 2 !important;
             }
@@ -1020,7 +1320,7 @@
             .mobile-detail-empty {
                 text-align: center;
                 padding: 40px 20px;
-                color: #999;
+                color: #d1d5db;
                 font-size: 14px;
             }
 
@@ -1033,8 +1333,8 @@
             .mobile-confirm-btn {
                 width: 100%;
                 padding: 14px;
-                background: #fbbf24;
-                color: #78350f;
+                background: #F06840;
+                color: white;
                 border: none;
                 border-radius: 10px;
                 font-size: 15px;
@@ -1049,7 +1349,7 @@
             }
 
             .mobile-confirm-btn.confirmed {
-                background: #fef3c7;
+                background: #FEF0EB;
                 border: 2px solid #fbbf24;
             }
 
@@ -1112,7 +1412,7 @@
 
         /* 태블릿 */
         @media (min-width: 769px) and (max-width: 1024px) {
-            .calendar-body {
+            .calendar {
                 grid-template-columns: repeat(7, minmax(110px, 1fr));
             }
 
@@ -1120,7 +1420,32 @@
                 min-height: 100px;
             }
 
-            .task-item {
+    
+
+        .project-tag-0 { background: #bfdbfe; color: #1e40af; }
+        .project-tag-1 { background: #fbcfe8; color: #9f1239; }
+        .project-tag-2 { background: #a7f3d0; color: #065f46; }
+        .project-tag-3 { background: #e9d5ff; color: #6b21a8; }
+        .project-tag-4 { background: #c7d2fe; color: #3730a3; }
+        .project-tag-5 { background: #fca5a5; color: #991b1b; }
+
+        .project-tag {
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 20px;
+            margin-right: 4px;
+            font-weight: 500;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .process-tag-목공 { background: #fde68a; color: #78350f; }
+        .process-tag-전기 { background: #bae6fd; color: #1e40af; }
+        .process-tag-필름 { background: #fad4e8; color: #831843; }
+        .process-tag-기타 { background: #e5e7eb; color: #4b5060; }
+        .process-tag-default { background: #e5e7eb; color: #4b5060; }
+
+        .task-item {
                 font-size: 12px !important;
             }
 
@@ -1160,7 +1485,32 @@
                 padding: 1px 0;
             }
 
-            .task-item {
+    
+
+        .project-tag-0 { background: #bfdbfe; color: #1e40af; }
+        .project-tag-1 { background: #fbcfe8; color: #9f1239; }
+        .project-tag-2 { background: #a7f3d0; color: #065f46; }
+        .project-tag-3 { background: #e9d5ff; color: #6b21a8; }
+        .project-tag-4 { background: #c7d2fe; color: #3730a3; }
+        .project-tag-5 { background: #fca5a5; color: #991b1b; }
+
+        .project-tag {
+            font-size: 10px;
+            padding: 1px 5px;
+            border-radius: 20px;
+            margin-right: 4px;
+            font-weight: 500;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .process-tag-목공 { background: #fde68a; color: #78350f; }
+        .process-tag-전기 { background: #bae6fd; color: #1e40af; }
+        .process-tag-필름 { background: #fad4e8; color: #831843; }
+        .process-tag-기타 { background: #e5e7eb; color: #4b5060; }
+        .process-tag-default { background: #e5e7eb; color: #4b5060; }
+
+        .task-item {
                 font-size: 9px !important;
                 padding: 1px 2px 1px 0 !important;
             }
@@ -1177,9 +1527,17 @@
 
         .week-number {
             font-size: 11px;
-            color: #999;
+            color: #d1d5db;
             font-weight: normal;
         }
+
+
+        .project-tag-0 { background: #bfdbfe; color: #1e40af; }
+        .project-tag-1 { background: #fbcfe8; color: #9f1239; }
+        .project-tag-2 { background: #a7f3d0; color: #065f46; }
+        .project-tag-3 { background: #e9d5ff; color: #6b21a8; }
+        .project-tag-4 { background: #c7d2fe; color: #3730a3; }
+        .project-tag-5 { background: #fca5a5; color: #991b1b; }
 
         .project-tag {
             font-size: 10px;
@@ -1193,18 +1551,81 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📅 프로젝트 통합 일정 관리</h1>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <h1>프로젝트 일정 관리</h1>
+                <!-- 설정 드롭다운 -->
+                <div class="settings-dropdown" id="settingsDropdown">
+                    <button class="btn settings-icon-btn" onclick="toggleSettingsMenu(event)" title="설정">
+                        <svg width="3" height="14" viewBox="0 0 4 18" fill="#6b7280" overflow="visible" style="display:block;">
+                            <circle cx="2" cy="2" r="2"/>
+                            <circle cx="2" cy="9" r="2"/>
+                            <circle cx="2" cy="16" r="2"/>
+                        </svg>
+                    </button>
+                    <div class="settings-menu" id="settingsMenu">
+                        <div class="settings-menu-info">
+                            <div class="settings-menu-info-row">
+                                <span class="settings-menu-info-label">저장 상태</span>
+                                <span class="settings-menu-info-value" id="firebaseStatus">로컬 모드</span>
+                            </div>
+                            <div class="settings-menu-info-row">
+                                <span class="settings-menu-info-label">마지막 저장</span>
+                                <span class="settings-menu-info-value" id="lastSaved">—</span>
+                            </div>
+                        </div>
+                        <div class="settings-menu-divider"></div>
+                        <div class="settings-menu-item" onclick="changeUserName(); closeSettingsMenu()">
+                            <span class="settings-menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg></span>
+                            <span>이름 변경</span>
+                        </div>
+                        <div class="settings-menu-item" onclick="openBackupSubMenu()">
+                            <span class="settings-menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg></span>
+                            <span>백업</span>
+                            <span class="settings-menu-arrow">›</span>
+                        </div>
+                        <div class="settings-menu-item" onclick="document.getElementById('restoreFile').click(); closeSettingsMenu()">
+                            <span class="settings-menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg></span>
+                            <span>복원</span>
+                        </div>
+                        <div class="settings-menu-divider"></div>
+                        <div class="settings-menu-item danger" onclick="resetAllData(); closeSettingsMenu()">
+                            <span class="settings-menu-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><path d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg></span>
+                            <span>전체 초기화</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="controls">
-                <span class="firebase-status" id="firebaseStatus">로컬 모드</span>
-                <button class="btn" onclick="changeUserName()" style="font-size: 12px; padding: 4px 8px;">👤 닉네임 변경</button>
-                <span id="lastSaved" style="font-size: 13px; opacity: 0.9;"></span>
-                <button class="btn" onclick="openProcessExtractModal()">📋 공정별 일정</button>
-                <button class="btn" onclick="backupJSON()">💾 JSON 백업</button>
-                <button class="btn" onclick="backupPDF()">📄 PDF 백업</button>
-                <button class="btn" onclick="document.getElementById('restoreFile').click()">📂 복원</button>
-                <button class="btn" onclick="resetAllData()" style="background: #dc3545;">🗑️ 전체 초기화</button>
+                <button class="btn" onclick="openProcessExtractModal()" style="display:inline-flex;align-items:center;gap:6px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0;">
+                        <path d="M3 4.5h18M7.5 9.75h9M10.5 15h3M12 19.5v-4.5"/>
+                    </svg>공정별 일정</button>
                 <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="restoreData(event)">
-                <button class="btn add-project-btn" onclick="openAddProjectModal()">+ 프로젝트 추가</button>
+                <button class="btn add-project-btn" onclick="openAddProjectModal()" style="display:inline-flex;align-items:center;gap:6px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0;">
+                        <path d="M12 4.5v15m7.5-7.5h-15"/>
+                    </svg>프로젝트 추가</button>
+            </div>
+        </div>
+
+        <!-- 백업 선택 팝업 -->
+        <div class="backup-popup-overlay" id="backupPopupOverlay" onclick="closeBackupPopup()">
+            <div class="backup-popup" onclick="event.stopPropagation()">
+                <div class="backup-popup-title">백업 방식 선택</div>
+                <div class="backup-popup-desc">백업할 형식을 선택해 주세요.</div>
+                <div class="backup-popup-options">
+                    <div class="backup-option" onclick="backupJSON(); closeBackupPopup()">
+                        <div class="backup-option-icon">💾</div>
+                        <div class="backup-option-label">JSON 백업</div>
+                        <div class="backup-option-desc">데이터 복원 가능</div>
+                    </div>
+                    <div class="backup-option" onclick="backupPDF(); closeBackupPopup()">
+                        <div class="backup-option-icon">📄</div>
+                        <div class="backup-option-label">PDF 백업</div>
+                        <div class="backup-option-desc">인쇄 / 공유용</div>
+                    </div>
+                </div>
+                <button class="backup-popup-cancel" onclick="closeBackupPopup()">취소</button>
             </div>
         </div>
 
@@ -1212,17 +1633,16 @@
             <!-- 동적 생성 -->
         </div>
         
-        <!-- 전체 프로젝트 필터 버튼 -->
-        <div id="viewFilterContainer" style="display: none; padding: 8px 24px; background: #f9fafb; border-bottom: 1px solid #e5e7eb;">
-            <label style="font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-                <input type="checkbox" id="showFromThisWeek" onchange="toggleWeekFilter()" checked style="cursor: pointer;">
-                <span>이번 주부터 보기</span>
-            </label>
-        </div>
-
         <div class="calendar-wrapper">
             <div class="project-info" id="projectInfo">
                 <!-- 동적 생성 -->
+            </div>
+
+            <div id="viewFilterContainer" style="display: none; justify-content: flex-end; align-items: center; margin-bottom: 8px;">
+                <label style="font-size: 13px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; color: #6b7280;">
+                    <input type="checkbox" id="showFromThisWeek" onchange="toggleWeekFilter()" checked style="cursor: pointer; accent-color: #F06840;">
+                    <span>이번 주부터 보기</span>
+                </label>
             </div>
 
             <div class="calendar">
@@ -1320,7 +1740,7 @@
             <div class="form-group">
                 <label>공정 키워드 *</label>
                 <input type="text" id="processKeyword" placeholder="예: 목공, 전기, 타일 등" onkeypress="if(event.key==='Enter') extractProcessSchedule()">
-                <div style="margin-top: 4px; font-size: 12px; color: #666;">
+                <div style="margin-top: 4px; font-size: 12px; color: #6b7280;">
                     오늘 이후 일정만 추출됩니다
                 </div>
             </div>
@@ -1342,11 +1762,11 @@
             <h2>일정 입력/수정</h2>
             <div class="form-group">
                 <label>날짜</label>
-                <input type="text" id="scheduleDate" readonly style="background: #f5f5f5;">
+                <input type="text" id="scheduleDate" readonly style="background: #f9fafb;">
             </div>
             <div class="form-group">
                 <label>프로젝트</label>
-                <input type="text" id="scheduleProject" readonly style="background: #f5f5f5;">
+                <input type="text" id="scheduleProject" readonly style="background: #f9fafb;">
             </div>
             <div class="form-group">
                 <label>일정 내용 *</label>
@@ -1454,8 +1874,30 @@
             }
         ];
 
-        let schedules = JSON.parse(localStorage.getItem('schedules')) || {};
-        let confirmedSchedules = JSON.parse(localStorage.getItem('confirmedSchedules')) || {};
+        let schedules = JSON.parse(localStorage.getItem('schedules')) || {
+            "1_2026-01-30": "철거",
+            "1_2026-01-31": "페인트",
+            "1_2026-02-05": "전기/목공",
+            "1_2026-02-23": "설비",
+            "1_2026-02-24": "타일",
+            "1_2026-03-04": "페인트",
+            "1_2026-03-09": "전기",
+            "2_2026-02-04": "보양",
+            "2_2026-02-05": "철거",
+            "2_2026-02-10": "타일\n전기",
+            "2_2026-02-23": "목공(규찬)",
+            "2_2026-03-02": "필름",
+            "3_2026-02-24": "철거",
+            "3_2026-02-26": "목공/전기",
+            "3_2026-03-12": "필름"
+        };
+        
+        let confirmedSchedules = JSON.parse(localStorage.getItem('confirmedSchedules')) || {
+            "1_2026-01-30": true,
+            "1_2026-02-23": true,
+            "2_2026-02-04": true,
+            "2_2026-02-05": true
+        };
         let currentView = 'all'; // 'all' 또는 프로젝트 ID
         let currentEditKey = null;
         let currentEditProjectId = null;
@@ -1527,6 +1969,11 @@
             renderLegend();
             setupKeyboardNavigation();
             setupContextMenuClose();
+            // 초기 필터 컨테이너 표시
+            const filterContainer = document.getElementById('viewFilterContainer');
+            if (filterContainer) {
+                filterContainer.style.display = currentView === 'all' ? 'flex' : 'none';
+            }
         }
 
         // ============================================
@@ -1537,7 +1984,9 @@
             const tabsContainer = document.getElementById('projectTabs');
             
             const allTab = `<div class="tab all-projects ${currentView === 'all' ? 'active' : ''}" onclick="switchView('all')">
-                📊 전체 프로젝트
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:2px;">
+                    <path d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+                </svg>전체
             </div>`;
             
             const projectTabs = projects.map(p => `
@@ -1555,7 +2004,7 @@
             // 전체 프로젝트 뷰일 때만 필터 표시
             const filterContainer = document.getElementById('viewFilterContainer');
             if (viewId === 'all') {
-                filterContainer.style.display = 'block';
+                filterContainer.style.display = 'flex';
             } else {
                 filterContainer.style.display = 'none';
             }
@@ -1580,7 +2029,7 @@
                 const dates = projects.flatMap(p => [new Date(p.start), new Date(p.end)]);
                 startDate = new Date(Math.min(...dates));
                 endDate = new Date(Math.max(...dates));
-                projectName = '전체 프로젝트';
+                projectName = '전체';
                 
                 // 이번 주부터 보기 필터
                 const showFromThisWeek = document.getElementById('showFromThisWeek').checked;
@@ -1616,11 +2065,10 @@
                 infoContainer.innerHTML = `
                     <div class="project-info-left">
                         <div class="project-info-title">${projectName}</div>
-                        <div class="project-info-dates">
-                            ${formatDateDisplay(startDate)} ~ ${formatDateDisplay(endDate)}
-                        </div>
-                        <div style="font-size: 13px; color: #666;">
-                            총 ${Math.ceil((calendarEnd - calendarStart) / (1000 * 60 * 60 * 24) / 7)}주
+                        <div class="project-detail-item">
+                            <span class="project-detail-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;vertical-align:middle;margin-right:6px;"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"/></svg>기간</span>
+                            <span class="project-detail-sep"> | </span>
+                            <span class="project-detail-value">${formatDateDisplay(startDate)} ~ ${formatDateDisplay(endDate)} <span style="color:#9ca3af;font-size:14px;">(총 ${Math.ceil((calendarEnd - calendarStart) / (1000 * 60 * 60 * 24) / 7)}주)</span></span>
                         </div>
                     </div>
                 `;
@@ -1629,36 +2077,34 @@
                 infoContainer.innerHTML = `
                     <div class="project-info-left">
                         <div class="project-info-title">${projectName}</div>
-                        <div class="project-info-dates">
-                            ${formatDateDisplay(startDate)} ~ ${formatDateDisplay(endDate)} 
-                            <span style="margin-left: 8px; color: #999;">
-                                (총 ${Math.ceil((calendarEnd - calendarStart) / (1000 * 60 * 60 * 24) / 7)}주)
-                            </span>
-                        </div>
-                    </div>
-                    <div class="project-info-right">
                         <div class="project-detail-item">
-                            <span class="project-detail-label">📍 주소</span>
-                            <span class="project-detail-value ${!project.address ? 'empty' : ''}">
-                                ${project.address || '미입력'}
-                            </span>
+                            <span class="project-detail-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;vertical-align:middle;margin-right:6px;"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"/></svg>기간</span>
+                            <span class="project-detail-sep"> | </span>
+                            <span class="project-detail-value">${formatDateDisplay(startDate)} ~ ${formatDateDisplay(endDate)} <span style="color:#9ca3af;font-size:14px;">(총 ${Math.ceil((calendarEnd - calendarStart) / (1000 * 60 * 60 * 24) / 7)}주)</span></span>
                         </div>
                         <div class="project-detail-item">
-                            <span class="project-detail-label">🔑 출입번호</span>
+                            <span class="project-detail-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;vertical-align:middle;margin-right:6px;"><path d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>주소</span>
+                            <span class="project-detail-sep"> | </span>
+                            <span class="project-detail-value ${!project.address ? 'empty' : ''}">${project.address || '미입력'}</span>
+                        </div>
+                        <div class="project-detail-item">
+                            <span class="project-detail-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;vertical-align:middle;margin-right:6px;"><path d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/></svg>출입번호</span>
+                            <span class="project-detail-sep"> | </span>
                             <span class="project-detail-value ${!project.doorPassword ? 'empty' : ''}">
                                 ${project.doorPassword ? `<span class="project-detail-password">${project.doorPassword}</span>` : '미입력'}
                             </span>
                         </div>
                         <div class="project-detail-item">
-                            <span class="project-detail-label">📋 현장정보</span>
-                            <span class="project-detail-value ${!project.siteNotes ? 'empty' : ''}" style="white-space: pre-line;">
-                                ${project.siteNotes || '미입력'}
-                            </span>
+                            <span class="project-detail-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;vertical-align:middle;margin-right:6px;"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>현장정보</span>
+                            <span class="project-detail-sep"> | </span>
+                            <span class="project-detail-value ${!project.siteNotes ? 'empty' : ''}" style="white-space: pre-line;">${project.siteNotes || '미입력'}</span>
                         </div>
-                        <button class="project-info-edit-btn" onclick="openEditProjectModal('${currentView}')">
-                            ✏️ 정보 수정
-                        </button>
                     </div>
+                    <button class="project-info-edit-btn" onclick="openEditProjectModal('${currentView}')" style="display:inline-flex;align-items:center;gap:4px;flex-shrink:0;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0;">
+                            <path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125"/>
+                        </svg>수정
+                    </button>
                 `;
             }
             
@@ -1717,6 +2163,7 @@
                          data-date="${dateStr}">
                         <div class="day-date ${dateColorClass}" data-day-name="${dayNames[dayOfWeek]}">
                             ${currentDate.getMonth() + 1}/${currentDate.getDate()}
+                            ${isToday ? `<span class="today-badge">Today</span>` : ''}
                             ${holidayName ? `<span style="font-size: 9px; margin-left: 4px;">${holidayName}</span>` : ''}
                             ${dayOfWeek === 0 && !holidayName ? `<span class="week-number">${weekNum}주차</span>` : ''}
                         </div>
@@ -1731,6 +2178,12 @@
                 currentDate.setDate(currentDate.getDate() + 1);
             }
             
+            // 마지막 7개 셀에 last-row 클래스 추가
+            const totalCells = cells.length;
+            const lastRowStart = totalCells - 7;
+            for (let i = lastRowStart; i < totalCells; i++) {
+                cells[i] = cells[i].replace('class="day-cell', 'class="day-cell last-row');
+            }
             bodyContainer.innerHTML = cells.join('');
         }
 
@@ -1776,7 +2229,7 @@
             const isMobile = window.innerWidth <= 768;
             
             if (currentView === 'all') {
-                // 전체 뷰
+                // 전체 뷰: 프로젝트별 색상
                 return projects.map(project => {
                     const scheduleKey = `${project.id}_${dateStr}`;
                     const content = schedules[scheduleKey];
@@ -1784,39 +2237,29 @@
                     
                     const isConfirmed = confirmedSchedules[scheduleKey] === true;
                     const lines = content.split('\n').filter(l => l.trim());
-                    return lines.map(line => {
-                        if (isMobile) {
-                            // 모바일: 프로젝트별 색상 + 공정만
-                            return `
-                                <div class="task-item project-color-${project.color} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}: ${line}">
-                                    ${line}
-                                </div>
-                            `;
-                        } else {
-                            // 데스크톱: 공정별 색상 + 프로젝트명 표시
-                            const process = detectProcess(line);
-                            return `
-                                <div class="task-item process-${process} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}">
-                                    <span class="project-tag" style="background: rgba(0,0,0,0.1);">${project.name}</span>
-                                    ${line}
-                                </div>
-                            `;
-                        }
-                    }).join('');
+                    return lines.map(line => `
+                        <div class="task-item project-color-${project.color} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}: ${line}">
+                            <span class="project-tag project-tag-${project.color}">${project.name}</span>
+                            ${line}
+                        </div>
+                    `).join('');
                 }).join('');
             } else {
-                // 개별 프로젝트 뷰 (큰 글씨, 프로젝트 색상) - 모바일/데스크톱 동일
+                // 개별 프로젝트 뷰: 공정별 색상 + 프로젝트명 라벨
                 const scheduleKey = `${currentView}_${dateStr}`;
                 const content = schedules[scheduleKey];
                 if (!content) return '';
                 
                 const project = projects.find(p => p.id === currentView);
                 const lines = content.split('\n').filter(l => l.trim());
-                return lines.map(line => `
-                    <div class="task-item large project-color-${project.color}">
-                        ${line}
-                    </div>
-                `).join('');
+                return lines.map(line => {
+                    const process = detectProcess(line);
+                    return `
+                        <div class="task-item large process-${process} ${confirmedSchedules[scheduleKey] ? 'confirmed' : ''}">
+                            ${line}
+                        </div>
+                    `;
+                }).join('');
             }
         }
 
@@ -2459,57 +2902,31 @@
             const isMobile = window.innerWidth <= 768;
             
             const commonItems = [
-                '<div class="legend-color" style="background: #fff7ed; border: 1px solid #fed7aa;"></div><span>오늘</span>',
-                '<div class="legend-color" style="background: #fef3c7; border: 1px solid #fde68a;"></div><span>확정</span>',
-                '<div class="legend-color" style="background: #f5f5f5;"></div><span>프로젝트 범위 외</span>'
+                '<div class="legend-color" style="background: #FEFCE8; border: 1px solid #FEF08A;"></div><span>확정</span>',
+                '<div class="legend-color" style="background: #f9fafb;"></div><span>프로젝트 범위 외</span>'
             ];
             
+            const processItems = [
+                '<div class="legend-color process-목공"></div><span>목공</span>',
+                '<div class="legend-color process-전기"></div><span>전기</span>',
+                '<div class="legend-color process-필름"></div><span>필름</span>',
+                '<div class="legend-color process-기타"></div><span>기타</span>'
+            ];
+
+            const projectItems = projects.map(p => 
+                `<div class="legend-color project-color-${p.color}"></div><span>${p.name}</span>`
+            );
+
             if (currentView === 'all') {
-                if (isMobile) {
-                    // 모바일 - 전체 뷰: 프로젝트별 범례
-                    const projectItems = projects.map(p => 
-                        `<div class="legend-color project-color-${p.color}"></div><span>${p.name}</span>`
-                    );
-                    
-                    legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
-                        `<div class="legend-item">${item}</div>`
-                    ).join('');
-                } else {
-                    // 데스크톱 - 전체 뷰: 공정별 범례 (주요 공정만)
-                    const processItems = [
-                        '<div class="legend-color process-목공"></div><span>목공</span>',
-                        '<div class="legend-color process-전기"></div><span>전기</span>',
-                        '<div class="legend-color process-필름"></div><span>필름</span>',
-                        '<div class="legend-color process-기타"></div><span>기타</span>'
-                    ];
-                    
-                    legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
-                        `<div class="legend-item">${item}</div>`
-                    ).join('');
-                }
+                // 전체 뷰: 프로젝트별 범례
+                legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
+                    `<div class="legend-item">${item}</div>`
+                ).join('');
             } else {
-                if (isMobile) {
-                    // 모바일 - 개별 프로젝트 뷰: 공정별 범례 (주요 공정만)
-                    const processItems = [
-                        '<div class="legend-color process-목공"></div><span>목공</span>',
-                        '<div class="legend-color process-전기"></div><span>전기</span>',
-                        '<div class="legend-color process-필름"></div><span>필름</span>',
-                        '<div class="legend-color process-기타"></div><span>기타</span>'
-                    ];
-                    
-                    legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
-                        `<div class="legend-item">${item}</div>`
-                    ).join('');
-                } else {
-                    // 데스크톱 - 개별 프로젝트 뷰: 프로젝트별 범례
-                    const projectItems = projects.map(p => 
-                        `<div class="legend-color project-color-${p.color}"></div><span>${p.name}</span>`
-                    );
-                    
-                    legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
-                        `<div class="legend-item">${item}</div>`
-                    ).join('');
-                }
+                // 개별 프로젝트 뷰: 공정별 범례
+                legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
+                    `<div class="legend-item">${item}</div>`
+                ).join('');
             }
         }
 
@@ -2867,7 +3284,7 @@
         function updateLastSaved() {
             const now = new Date();
             const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-            document.getElementById('lastSaved').textContent = `마지막 저장: ${timeStr}`;
+            document.getElementById('lastSaved').textContent = timeStr;
         }
 
         function formatDateKey(date) {
@@ -3005,6 +3422,35 @@
 
         // ============================================
         // 닉네임 변경
+        // 설정 드롭다운
+        function toggleSettingsMenu(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('settingsMenu');
+            menu.classList.toggle('show');
+        }
+
+        function closeSettingsMenu() {
+            document.getElementById('settingsMenu').classList.remove('show');
+        }
+
+        // 외부 클릭 시 닫기
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('settingsDropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                closeSettingsMenu();
+            }
+        });
+
+        // 백업 서브메뉴 (팝업)
+        function openBackupSubMenu() {
+            closeSettingsMenu();
+            document.getElementById('backupPopupOverlay').classList.add('show');
+        }
+
+        function closeBackupPopup() {
+            document.getElementById('backupPopupOverlay').classList.remove('show');
+        }
+
         // ============================================
 
         function changeUserName() {
@@ -3279,7 +3725,7 @@
                 const users = Array.from(uniqueUsers.values());
                 
                 if (users.length === 0) {
-                    userListDiv.innerHTML = '<div style="font-size: 11px; color: #999;">나만 접속 중</div>';
+                    userListDiv.innerHTML = '<div style="font-size: 11px; color: #d1d5db;">나만 접속 중</div>';
                     return;
                 }
                 
@@ -3292,7 +3738,7 @@
                             </div>
                             <div style="flex: 1;">
                                 <div style="font-weight: 500;">${user.name}</div>
-                                ${editing ? `<div style="font-size: 10px; color: #666;">${editing}</div>` : ''}
+                                ${editing ? `<div style="font-size: 10px; color: #6b7280;">${editing}</div>` : ''}
                             </div>
                             <div class="user-status"></div>
                         </div>
