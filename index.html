@@ -1687,12 +1687,25 @@
         <div class="mobile-detail-content">
             <div class="mobile-detail-header">
                 <div class="mobile-detail-title" id="mobileDetailTitle"></div>
-                <button class="mobile-detail-close" onclick="closeMobileDetail()">✕ 닫기</button>
             </div>
             <div class="mobile-detail-body" id="mobileDetailBody"></div>
+            <!-- 수정 모드 -->
+            <div class="mobile-edit-section" id="mobileEditSection" style="display: none; padding: 0 16px 16px;">
+                <textarea id="mobileEditContent" placeholder="일정 내용을 입력하세요&#10;예:&#10;목공(춘섭)&#10;전기 타공" 
+                    style="width: 100%; min-height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; font-family: inherit; resize: vertical;"></textarea>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button onclick="saveMobileEdit()" style="flex: 1; padding: 12px; background: #667eea; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: 600;">💾 저장</button>
+                    <button onclick="deleteMobileSchedule()" style="flex: 1; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: 600;">🗑️ 삭제</button>
+                    <button onclick="cancelMobileEdit()" style="padding: 12px 16px; background: #6c757d; color: white; border: none; border-radius: 6px; font-size: 15px;">취소</button>
+                </div>
+            </div>
             <div class="mobile-detail-footer" id="mobileDetailFooter" style="display: none;">
                 <button class="mobile-confirm-btn" id="mobileConfirmBtn" onclick="toggleMobileConfirm()">
                     확정 표시
+                </button>
+                <button class="mobile-edit-btn" id="mobileEditBtn" onclick="startMobileEdit()" 
+                    style="padding: 12px 20px; background: #667eea; color: white; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; margin-left: 8px;">
+                    ✏️ 수정
                 </button>
             </div>
         </div>
@@ -1772,6 +1785,9 @@
                 <label>일정 내용 *</label>
                 <textarea id="scheduleContent" placeholder="예:&#10;목공(춘섭)&#10;전기 타공&#10;페인트"></textarea>
             </div>
+            <div id="scheduleMetadata" style="padding: 8px 12px; background: #f9fafb; border-radius: 6px; font-size: 13px; color: #6b7280; margin-bottom: 16px; display: none;">
+                💾 <span id="scheduleMetadataText"></span>
+            </div>
             <div class="form-actions">
                 <button class="btn-danger" onclick="deleteSchedule()" id="deleteBtn">삭제</button>
                 <button class="btn-secondary" onclick="closeEditScheduleModal()">취소</button>
@@ -1821,83 +1837,11 @@
         // 데이터 관리
         // ============================================
         
-        let projects = JSON.parse(localStorage.getItem('projects')) || [
-            { 
-                id: '1', 
-                name: '온스트릿', 
-                start: '2026-01-27', 
-                end: '2026-03-10', 
-                color: 0,
-                address: '서울시 강남구 테헤란로 123',
-                doorPassword: '1234*5678',
-                siteNotes: '주차: 건물 뒤편 공용주차장\n엘리베이터 사용 가능 (10시~17시)'
-            },
-            { 
-                id: '2', 
-                name: '양구군 서희아파트', 
-                start: '2026-02-01', 
-                end: '2026-03-20', 
-                color: 1,
-                address: '강원도 양구군 양구읍 서희아파트 101동 1502호',
-                doorPassword: '',
-                siteNotes: '주차: 아파트 방문차량 주차장 (경비실 통보)\n소음 주의: 오전 8시~오후 6시만 작업 가능'
-            },
-            { 
-                id: '3', 
-                name: '현진에버빌3차', 
-                start: '2026-02-21', 
-                end: '2026-04-08', 
-                color: 2,
-                address: '',
-                doorPassword: '',
-                siteNotes: ''
-            },
-            { 
-                id: '4', 
-                name: '남부노인회관', 
-                start: '2026-02-20', 
-                end: '2026-03-30', 
-                color: 3,
-                address: '',
-                doorPassword: '',
-                siteNotes: ''
-            },
-            { 
-                id: '5', 
-                name: '칠전대우2차 아파트', 
-                start: '2026-03-10', 
-                end: '2026-04-15', 
-                color: 4,
-                address: '',
-                doorPassword: '',
-                siteNotes: ''
-            }
-        ];
+        let projects = JSON.parse(localStorage.getItem('projects')) || [];
 
-        let schedules = JSON.parse(localStorage.getItem('schedules')) || {
-            "1_2026-01-30": "철거",
-            "1_2026-01-31": "페인트",
-            "1_2026-02-05": "전기/목공",
-            "1_2026-02-23": "설비",
-            "1_2026-02-24": "타일",
-            "1_2026-03-04": "페인트",
-            "1_2026-03-09": "전기",
-            "2_2026-02-04": "보양",
-            "2_2026-02-05": "철거",
-            "2_2026-02-10": "타일\n전기",
-            "2_2026-02-23": "목공(규찬)",
-            "2_2026-03-02": "필름",
-            "3_2026-02-24": "철거",
-            "3_2026-02-26": "목공/전기",
-            "3_2026-03-12": "필름"
-        };
+        let schedules = JSON.parse(localStorage.getItem('schedules')) || {};
         
-        let confirmedSchedules = JSON.parse(localStorage.getItem('confirmedSchedules')) || {
-            "1_2026-01-30": true,
-            "1_2026-02-23": true,
-            "2_2026-02-04": true,
-            "2_2026-02-05": true
-        };
+        let confirmedSchedules = JSON.parse(localStorage.getItem('confirmedSchedules')) || {};
         let currentView = 'all'; // 'all' 또는 프로젝트 ID
         let currentEditKey = null;
         let currentEditProjectId = null;
@@ -2193,7 +2137,7 @@
                 let count = 0;
                 projects.forEach(project => {
                     const scheduleKey = `${project.id}_${dateStr}`;
-                    const content = schedules[scheduleKey];
+                    const content = getScheduleContent(scheduleKey);
                     if (content) {
                         const lines = content.split('\n').filter(l => l.trim());
                         count += lines.length;
@@ -2202,7 +2146,7 @@
                 return count > 3;
             } else {
                 const scheduleKey = `${currentView}_${dateStr}`;
-                const content = schedules[scheduleKey];
+                const content = getScheduleContent(scheduleKey);
                 if (content) {
                     const lines = content.split('\n').filter(l => l.trim());
                     return lines.length > 3;
@@ -2232,7 +2176,7 @@
                 // 전체 뷰: 프로젝트별 색상
                 return projects.map(project => {
                     const scheduleKey = `${project.id}_${dateStr}`;
-                    const content = schedules[scheduleKey];
+                    const content = getScheduleContent(scheduleKey);
                     if (!content) return '';
                     
                     const isConfirmed = confirmedSchedules[scheduleKey] === true;
@@ -2247,7 +2191,7 @@
             } else {
                 // 개별 프로젝트 뷰: 공정별 색상 + 프로젝트명 라벨
                 const scheduleKey = `${currentView}_${dateStr}`;
-                const content = schedules[scheduleKey];
+                const content = getScheduleContent(scheduleKey);
                 if (!content) return '';
                 
                 const project = projects.find(p => p.id === currentView);
@@ -2436,6 +2380,7 @@
                 document.getElementById('scheduleProject').value = '전체 보기에서는 개별 프로젝트로 전환하여 입력하세요';
                 document.getElementById('scheduleContent').disabled = true;
                 document.getElementById('deleteBtn').style.display = 'none';
+                document.getElementById('scheduleMetadata').style.display = 'none';
                 return;
             }
             
@@ -2445,7 +2390,19 @@
             document.getElementById('deleteBtn').style.display = 'block';
             
             currentEditKey = `${currentView}_${dateStr}`;
-            document.getElementById('scheduleContent').value = schedules[currentEditKey] || '';
+            const content = getScheduleContent(currentEditKey);
+            const metadata = getScheduleMetadata(currentEditKey);
+            
+            document.getElementById('scheduleContent').value = content || '';
+            
+            // 메타데이터 표시
+            if (metadata) {
+                document.getElementById('scheduleMetadata').style.display = 'block';
+                document.getElementById('scheduleMetadataText').textContent = 
+                    `${getRelativeTime(metadata.updatedAt)} (${metadata.updatedBy})`;
+            } else {
+                document.getElementById('scheduleMetadata').style.display = 'none';
+            }
         }
 
         function closeEditScheduleModal() {
@@ -2458,16 +2415,13 @@
             
             const content = document.getElementById('scheduleContent').value.trim();
             
-            if (content) {
-                schedules[currentEditKey] = content;
-            } else {
-                delete schedules[currentEditKey];
-            }
+            // 메타데이터와 함께 저장
+            setScheduleWithMetadata(currentEditKey, content);
             
             localStorage.setItem('schedules', JSON.stringify(schedules));
             
             if (useFirebase && db) {
-                // Firebase 저장 (나중에 구현)
+                db.ref('schedules').set(schedules);
             }
             
             closeEditScheduleModal();
@@ -3150,7 +3104,7 @@
                 // 전체 뷰: 모든 프로젝트의 일정 (프로젝트별 색상 + 프로젝트명: 공정)
                 projects.forEach(project => {
                     const scheduleKey = `${project.id}_${dateStr}`;
-                    const content = schedules[scheduleKey];
+                    const content = getScheduleContent(scheduleKey);
                     if (content) {
                         const isConfirmed = confirmedSchedules[scheduleKey] === true;
                         const lines = content.split('\n').filter(l => l.trim());
@@ -3168,7 +3122,8 @@
             } else {
                 // 개별 프로젝트 뷰
                 const scheduleKey = `${currentView}_${dateStr}`;
-                const content = schedules[scheduleKey];
+                const content = getScheduleContent(scheduleKey);
+                const metadata = getScheduleMetadata(scheduleKey);
                 const isConfirmed = confirmedSchedules[scheduleKey] === true;
                 
                 if (content) {
@@ -3181,12 +3136,27 @@
                             </div>
                         `;
                     });
+                    
+                    // 메타데이터 표시
+                    if (metadata) {
+                        scheduleHTML += `
+                            <div style="padding: 8px 16px; font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; margin-top: 8px;">
+                                💾 ${getRelativeTime(metadata.updatedAt)} (${metadata.updatedBy})
+                            </div>
+                        `;
+                    }
                 }
                 
                 // 개별 프로젝트 뷰에서는 확정 버튼 표시
                 if (content) {
-                    footerDiv.style.display = 'block';
+                    footerDiv.style.display = 'flex';
                     confirmBtn.dataset.dateStr = dateStr;
+                    
+                    // 수정 버튼에도 dateStr 설정
+                    const editBtn = document.getElementById('mobileEditBtn');
+                    if (editBtn) {
+                        editBtn.dataset.dateStr = dateStr;
+                    }
                     
                     if (isConfirmed) {
                         confirmBtn.textContent = '✓ 확정됨 (탭하여 해제)';
@@ -3196,7 +3166,16 @@
                         confirmBtn.classList.remove('confirmed');
                     }
                 } else {
-                    footerDiv.style.display = 'none';
+                    // 일정이 없어도 개별 프로젝트 뷰에서는 수정 버튼 표시 (추가 가능)
+                    footerDiv.style.display = 'flex';
+                    confirmBtn.style.display = 'none';
+                    
+                    const editBtn = document.getElementById('mobileEditBtn');
+                    if (editBtn) {
+                        editBtn.dataset.dateStr = dateStr;
+                        editBtn.style.display = 'block';
+                        editBtn.textContent = '➕ 추가';
+                    }
                 }
             }
             
@@ -3212,6 +3191,20 @@
         function closeMobileDetail() {
             const modal = document.getElementById('mobileDetailModal');
             modal.classList.remove('show');
+            
+            // 수정 영역 초기화
+            if (document.getElementById('mobileEditSection').style.display !== 'none') {
+                cancelMobileEdit();
+            }
+            
+            // 버튼 표시 초기화
+            const confirmBtn = document.getElementById('mobileConfirmBtn');
+            const editBtn = document.getElementById('mobileEditBtn');
+            if (confirmBtn) confirmBtn.style.display = 'block';
+            if (editBtn) {
+                editBtn.style.display = 'block';
+                editBtn.textContent = '✏️ 수정';
+            }
         }
 
         function toggleMobileConfirm() {
@@ -3245,6 +3238,106 @@
             renderCalendar();
         }
 
+        // ============================================
+        // 모바일 일정 수정 기능
+        // ============================================
+        
+        let currentMobileEditKey = null;
+        
+        function startMobileEdit() {
+            const editBtn = document.getElementById('mobileEditBtn');
+            const dateStr = editBtn.dataset.dateStr;
+            
+            if (!dateStr || currentView === 'all') return;
+            
+            const scheduleKey = `${currentView}_${dateStr}`;
+            currentMobileEditKey = scheduleKey;
+            
+            // 현재 일정 내용 가져오기
+            const currentContent = getScheduleContent(scheduleKey);
+            
+            // 수정 영역 표시
+            document.getElementById('mobileEditSection').style.display = 'block';
+            document.getElementById('mobileEditContent').value = currentContent;
+            document.getElementById('mobileDetailFooter').style.display = 'none';
+            document.getElementById('mobileDetailBody').style.display = 'none';
+            
+            // 포커스
+            document.getElementById('mobileEditContent').focus();
+        }
+        
+        function saveMobileEdit() {
+            if (!currentMobileEditKey) return;
+            
+            const content = document.getElementById('mobileEditContent').value.trim();
+            
+            // 메타데이터와 함께 저장
+            setScheduleWithMetadata(currentMobileEditKey, content);
+            
+            // 저장
+            localStorage.setItem('schedules', JSON.stringify(schedules));
+            
+            // Firebase 저장
+            if (useFirebase && db) {
+                db.ref('schedules').set(schedules);
+            }
+            
+            // 달력 업데이트
+            renderCalendar();
+            
+            // 수정 영역 숨기고 상세보기 다시 표시
+            cancelMobileEdit();
+            
+            // 모달 닫기
+            closeMobileDetail();
+            
+            showSaveIndicator('저장 완료');
+        }
+        
+        function deleteMobileSchedule() {
+            if (!currentMobileEditKey) return;
+            
+            if (!confirm('이 일정을 삭제하시겠습니까?')) {
+                return;
+            }
+            
+            // 일정 삭제
+            delete schedules[currentMobileEditKey];
+            
+            // 확정 상태도 삭제
+            if (confirmedSchedules[currentMobileEditKey]) {
+                delete confirmedSchedules[currentMobileEditKey];
+                localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
+                
+                if (useFirebase && db) {
+                    db.ref('confirmedSchedules').set(confirmedSchedules);
+                }
+            }
+            
+            // 저장
+            localStorage.setItem('schedules', JSON.stringify(schedules));
+            
+            // Firebase 저장
+            if (useFirebase && db) {
+                db.ref('schedules').set(schedules);
+            }
+            
+            // 달력 업데이트
+            renderCalendar();
+            
+            // 모달 닫기
+            closeMobileDetail();
+            
+            showSaveIndicator('삭제 완료');
+        }
+        
+        function cancelMobileEdit() {
+            document.getElementById('mobileEditSection').style.display = 'none';
+            document.getElementById('mobileDetailFooter').style.display = 'flex';
+            document.getElementById('mobileDetailBody').style.display = 'block';
+            currentMobileEditKey = null;
+        }
+
         // 모달 바깥 클릭 시 닫기
         document.addEventListener('click', function(e) {
             const modal = document.getElementById('mobileDetailModal');
@@ -3270,6 +3363,86 @@
             
             // 나머지는 기타 (프로젝트 범위 외 색상)
             return '기타';
+        }
+
+        // ============================================
+        // 일정 메타데이터 관리
+        // ============================================
+
+        // 일정 내용 가져오기 (문자열/객체 호환)
+        function getScheduleContent(key) {
+            const data = schedules[key];
+            if (!data) return '';
+            
+            // 기존 형식 (문자열)
+            if (typeof data === 'string') {
+                return data;
+            }
+            
+            // 새 형식 (객체)
+            if (data && data.content) {
+                return data.content;
+            }
+            
+            return '';
+        }
+
+        // 일정 메타데이터 가져오기
+        function getScheduleMetadata(key) {
+            const data = schedules[key];
+            if (!data) return null;
+            
+            // 새 형식만 메타데이터 있음
+            if (data && typeof data === 'object' && data.updatedAt) {
+                return {
+                    updatedAt: data.updatedAt,
+                    updatedBy: data.updatedBy || '알 수 없음'
+                };
+            }
+            
+            return null;
+        }
+
+        // 일정 저장 (메타데이터 포함)
+        function setScheduleWithMetadata(key, content) {
+            if (!content || !content.trim()) {
+                delete schedules[key];
+                return;
+            }
+            
+            schedules[key] = {
+                content: content.trim(),
+                updatedAt: Date.now(),
+                updatedBy: currentUser ? currentUser.name : '알 수 없음'
+            };
+        }
+
+        // 시간 포맷 (timestamp → "3월 9일 14:30")
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hours = date.getHours();
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            
+            return `${month}월 ${day}일 ${hours}:${minutes}`;
+        }
+
+        // 상대 시간 ("방금 전", "5분 전", "2시간 전")
+        function getRelativeTime(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const seconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (seconds < 60) return '방금 전';
+            if (minutes < 60) return `${minutes}분 전`;
+            if (hours < 24) return `${hours}시간 전`;
+            if (days < 7) return `${days}일 전`;
+            
+            return formatTimestamp(timestamp);
         }
 
         function showSaveIndicator(message = '자동 저장됨') {
@@ -3335,7 +3508,7 @@
                     // 오늘 이후만
                     if (scheduleDate < today) return;
                     
-                    const content = schedules[scheduleKey];
+                    const content = getScheduleContent(scheduleKey);
                     if (content && content.toLowerCase().includes(keyword.toLowerCase())) {
                         results.push({
                             date: scheduleDate,
