@@ -544,12 +544,27 @@
             z-index: 2 !important;
         }
 
+        /* 오늘 날짜는 범위 밖이어도 선명하게! */
+        .day-cell.today.out-of-range .day-date {
+            opacity: 1 !important;
+        }
+
+        /* Today 뱃지는 항상 선명하게! */
+        .day-cell.today .today-badge {
+            opacity: 1 !important;
+        }
+
         .day-cell.confirmed {
             background: #FEFCE8 !important;
         }
 
         .day-cell.confirmed.today {
             z-index: 2 !important;
+        }
+
+        /* 확정된 오늘 날짜의 day-date도 선명하게 */
+        .day-cell.confirmed.today .day-date {
+            opacity: 1 !important;
         }
 
 
@@ -2070,7 +2085,7 @@
                 
                 // 디버깅: 오늘 날짜일 때 로그
                 if (isToday) {
-                    console.log('✅ 오늘 날짜 발견!', dateStr, '뷰:', currentView);
+                    console.log('✅ 오늘 날짜 발견!', dateStr, '뷰:', currentView, 'out-of-range:', isOutOfRange);
                 }
                 const dayOfWeek = currentDate.getDay();
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
