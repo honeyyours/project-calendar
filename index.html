@@ -502,6 +502,7 @@
         .day-cell {
             border-right: 1px solid #ddd;
             border-bottom: 1px solid #ddd;
+            min-height: 100px; /* 모든 셀 높이 일정하게 유지 */
         }
 
         .day-cell.last-row {
@@ -793,7 +794,7 @@
         /* 공정별 색상 (전체 뷰용) - 주요 공정만 */
         .process-목공 { background: #fef9c3; border-left-color: #f59e0b; color: #78350f; }
         .process-전기 { background: #e0f2fe; border-left-color: #3b82f6; color: #1e40af; }
-        .process-필름 { background: #fce7f3; border-left-color: #ec4899; color: #831843; }
+        .process-타일 { background: #fce7f3; border-left-color: #ec4899; color: #831843; }
         .process-기타 { background: #f3f4f6; border-left-color: #9ca3af; color: #4b5060; }
         .process-default { background: #f3f4f6; border-left-color: #9ca3af; color: #4b5060; }
 
@@ -2173,21 +2174,43 @@
             const isMobile = window.innerWidth <= 768;
             
             if (currentView === 'all') {
-                // 전체 뷰: 프로젝트별 색상
-                return projects.map(project => {
-                    const scheduleKey = `${project.id}_${dateStr}`;
-                    const content = getScheduleContent(scheduleKey);
-                    if (!content) return '';
-                    
-                    const isConfirmed = confirmedSchedules[scheduleKey] === true;
-                    const lines = content.split('\n').filter(l => l.trim());
-                    return lines.map(line => `
-                        <div class="task-item project-color-${project.color} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}: ${line}">
-                            <span class="project-tag project-tag-${project.color}">${project.name}</span>
-                            ${line}
-                        </div>
-                    `).join('');
-                }).join('');
+                // 전체 뷰
+                if (isMobile) {
+                    // 모바일: 프로젝트별 색상 (기존 방식)
+                    return projects.map(project => {
+                        const scheduleKey = `${project.id}_${dateStr}`;
+                        const content = getScheduleContent(scheduleKey);
+                        if (!content) return '';
+                        
+                        const isConfirmed = confirmedSchedules[scheduleKey] === true;
+                        const lines = content.split('\n').filter(l => l.trim());
+                        return lines.map(line => `
+                            <div class="task-item project-color-${project.color} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}: ${line}">
+                                <span class="project-tag project-tag-${project.color}">${project.name}</span>
+                                ${line}
+                            </div>
+                        `).join('');
+                    }).join('');
+                } else {
+                    // 데스크톱: 공정별 색상 (목공, 전기, 타일만)
+                    return projects.map(project => {
+                        const scheduleKey = `${project.id}_${dateStr}`;
+                        const content = getScheduleContent(scheduleKey);
+                        if (!content) return '';
+                        
+                        const isConfirmed = confirmedSchedules[scheduleKey] === true;
+                        const lines = content.split('\n').filter(l => l.trim());
+                        return lines.map(line => {
+                            const process = detectProcess(line);
+                            return `
+                                <div class="task-item process-${process} ${isConfirmed ? 'confirmed' : ''}" title="${project.name}: ${line}">
+                                    <span class="project-tag project-tag-${project.color}">${project.name}</span>
+                                    ${line}
+                                </div>
+                            `;
+                        }).join('');
+                    }).join('');
+                }
             } else {
                 // 개별 프로젝트 뷰: 공정별 색상 + 프로젝트명 라벨
                 const scheduleKey = `${currentView}_${dateStr}`;
@@ -2863,7 +2886,7 @@
             const processItems = [
                 '<div class="legend-color process-목공"></div><span>목공</span>',
                 '<div class="legend-color process-전기"></div><span>전기</span>',
-                '<div class="legend-color process-필름"></div><span>필름</span>',
+                '<div class="legend-color process-타일"></div><span>타일</span>',
                 '<div class="legend-color process-기타"></div><span>기타</span>'
             ];
 
@@ -2872,10 +2895,18 @@
             );
 
             if (currentView === 'all') {
-                // 전체 뷰: 프로젝트별 범례
-                legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
-                    `<div class="legend-item">${item}</div>`
-                ).join('');
+                // 전체 뷰
+                if (isMobile) {
+                    // 모바일: 프로젝트별 범례
+                    legendContainer.innerHTML = [...commonItems, ...projectItems].map(item => 
+                        `<div class="legend-item">${item}</div>`
+                    ).join('');
+                } else {
+                    // 데스크톱: 공정별 범례
+                    legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
+                        `<div class="legend-item">${item}</div>`
+                    ).join('');
+                }
             } else {
                 // 개별 프로젝트 뷰: 공정별 범례
                 legendContainer.innerHTML = [...commonItems, ...processItems].map(item => 
@@ -3355,8 +3386,8 @@
             // 주요 공정만 색상 적용
             if (text.includes('목공')) {
                 return '목공';
-            } else if (text.includes('필름')) {
-                return '필름';
+            } else if (text.includes('타일')) {
+                return '타일';
             } else if (text.includes('전기')) {
                 return '전기';
             }
