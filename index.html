@@ -2081,17 +2081,18 @@
             
             while (currentDate <= calendarEnd) {
                 const dateStr = formatDateKey(currentDate);
+                const dayOfWeek = currentDate.getDay();
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                
+                // 범위 밖 체크 (먼저 정의!)
+                const isOutOfRange = currentView !== 'all' && (currentDate < startDate || currentDate > endDate);
+                
                 const isToday = currentDate.getTime() === today.getTime();
                 
                 // 디버깅: 오늘 날짜일 때 로그
                 if (isToday) {
                     console.log('✅ 오늘 날짜 발견!', dateStr, '뷰:', currentView, 'out-of-range:', isOutOfRange);
                 }
-                const dayOfWeek = currentDate.getDay();
-                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-                
-                // 범위 밖 체크
-                const isOutOfRange = currentView !== 'all' && (currentDate < startDate || currentDate > endDate);
                 
                 // 확정 여부 체크
                 const scheduleKey = `${currentView}_${dateStr}`;
