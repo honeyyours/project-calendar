@@ -555,7 +555,7 @@
         }
 
         .day-cell.confirmed {
-            background: #FEFCE8 !important;
+            /* 배경색 제거 - 체크 마크로 대체 */
         }
 
         .day-cell.confirmed.today {
@@ -673,6 +673,21 @@
 
         .task-item.confirmed {
             font-weight: 400;
+            position: relative;
+            padding-right: 28px; /* 체크 마크 공간 확보 */
+        }
+
+        /* 확정 체크 마크 (우측) */
+        .task-item.confirmed::after {
+            content: '✓';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #10b981; /* 연두색 */
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
         }
 
         .edit-textarea {
@@ -1202,18 +1217,12 @@
                 line-height: 1;
             }
 
-            /* 확정 표시는 작은 점으로 */
-            .day-cell.confirmed .day-date::after {
-                content: '●';
-                margin-left: 2px;
-                font-size: 6px;
-                color: #10b981;
-                vertical-align: super;
-            }
+            /* 확정 표시는 체크 마크로 (데스크톱과 동일) */
+            /* day-date 점 제거 */
 
             /* 모바일 확정 셀 */
             .day-cell.confirmed {
-                background: #FEFCE8 !important;
+                /* 배경색 제거 */
             }
 
             /* 모바일 확정된 오늘 날짜 */
@@ -1982,6 +1991,20 @@
             const bodyContainer = document.getElementById('calendarBody');
             const infoContainer = document.getElementById('projectInfo');
             
+            // 프로젝트가 없을 때 처리
+            if (!projects || projects.length === 0) {
+                console.warn('⚠️ 프로젝트가 없습니다. Firebase 연결을 확인하세요.');
+                bodyContainer.innerHTML = `
+                    <div style="padding: 40px; text-align: center; color: #9ca3af;">
+                        <p style="font-size: 16px; margin-bottom: 8px;">📋 프로젝트가 없습니다</p>
+                        <p style="font-size: 14px;">Firebase 연결을 확인하거나 프로젝트를 추가하세요.</p>
+                        <p style="font-size: 12px; margin-top: 16px; color: #d1d5db;">F12 → Console에서 에러를 확인하세요.</p>
+                    </div>
+                `;
+                infoContainer.innerHTML = '';
+                return;
+            }
+            
             let startDate, endDate, projectName;
             
             if (currentView === 'all') {
@@ -2142,7 +2165,9 @@
             const totalCells = cells.length;
             const lastRowStart = totalCells - 7;
             for (let i = lastRowStart; i < totalCells; i++) {
-                cells[i] = cells[i].replace('class="day-cell', 'class="day-cell last-row');
+                if (cells[i]) {  // undefined 체크!
+                    cells[i] = cells[i].replace('class="day-cell', 'class="day-cell last-row');
+                }
             }
             bodyContainer.innerHTML = cells.join('');
         }
@@ -2894,7 +2919,7 @@
             const isMobile = window.innerWidth <= 768;
             
             const commonItems = [
-                '<div class="legend-color" style="background: #FEFCE8; border: 1px solid #FEF08A;"></div><span>확정</span>',
+                '<div class="legend-color" style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: #10b981; font-weight: bold; font-size: 14px;">✓</div><span>확정</span>',
                 '<div class="legend-color" style="background: #f9fafb;"></div><span>프로젝트 범위 외</span>'
             ];
             
@@ -3848,6 +3873,9 @@
                         localStorage.setItem('schedules', JSON.stringify(schedules));
                         renderCalendar();
                     });
+                }).catch(error => {
+                    console.error('❌ Firebase schedules 읽기 실패:', error);
+                    console.error('에러 상세:', error.code, error.message);
                 });
                 
                 // 확정 상태 실시간 동기화
@@ -3872,6 +3900,9 @@
                         localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
                         renderCalendar();
                     });
+                }).catch(error => {
+                    console.error('❌ Firebase confirmedSchedules 읽기 실패:', error);
+                    console.error('에러 상세:', error.code, error.message);
                 });
                 
                 // 프로젝트 데이터 동기화
@@ -3885,9 +3916,14 @@
                         localStorage.setItem('projects', JSON.stringify(projects));
                         renderProjectTabs();
                         renderLegend();
+                        renderCalendar(); // 프로젝트 로드 후 달력 렌더링!
                     } else if (projects.length > 0) {
                         console.log('📤 로컬 프로젝트를 Firebase에 업로드');
                         db.ref('projects').set(projects);
+                    } else {
+                        // Firebase도 로컬도 비어있음
+                        console.warn('⚠️ 프로젝트 데이터가 없습니다');
+                        renderCalendar(); // 에러 메시지 표시를 위해 호출
                     }
                     
                     // 이후 실시간 동기화
@@ -3897,7 +3933,12 @@
                         localStorage.setItem('projects', JSON.stringify(projects));
                         renderProjectTabs();
                         renderLegend();
+                        renderCalendar(); // 프로젝트 업데이트 시 달력도 업데이트!
                     });
+                }).catch(error => {
+                    console.error('❌ Firebase projects 읽기 실패:', error);
+                    console.error('에러 상세:', error.code, error.message);
+                    renderCalendar(); // 에러 메시지 표시
                 });
             }
             
