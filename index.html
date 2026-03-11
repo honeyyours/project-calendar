@@ -2009,6 +2009,9 @@
                 endDate = new Date(project.end);
                 projectName = project.name;
                 
+                // 디버깅: 프로젝트 기간
+                console.log('📅 프로젝트:', projectName, '시작:', project.start, '종료:', project.end);
+                
                 infoContainer.className = 'project-info';
             }
             
@@ -2019,6 +2022,9 @@
             // 종료일이 포함된 주의 토요일
             const calendarEnd = new Date(endDate);
             calendarEnd.setDate(calendarEnd.getDate() + (6 - calendarEnd.getDay()));
+            
+            // 디버깅: 달력 범위
+            console.log('📆 달력 범위:', formatDateKey(calendarStart), '~', formatDateKey(calendarEnd));
             
             // 프로젝트 정보 표시
             if (currentView === 'all') {
@@ -2074,10 +2080,11 @@
             today.setHours(0, 0, 0, 0);
             
             // 디버깅: 오늘 날짜 확인
-            console.log('오늘 날짜:', formatDateKey(today), '현재 뷰:', currentView);
+            console.log('🕐 오늘 날짜:', formatDateKey(today), '(timestamp:', today.getTime(), ') 현재 뷰:', currentView);
             
             let currentDate = new Date(calendarStart);
             let weekNum = 1;
+            let foundToday = false; // 오늘 날짜 발견 여부
             
             while (currentDate <= calendarEnd) {
                 const dateStr = formatDateKey(currentDate);
@@ -2088,6 +2095,16 @@
                 const isOutOfRange = currentView !== 'all' && (currentDate < startDate || currentDate > endDate);
                 
                 const isToday = currentDate.getTime() === today.getTime();
+                
+                // 디버깅: 오늘 날짜 체크
+                if (dateStr === formatDateKey(today)) {
+                    console.log('🔍 오늘 날짜 체크:', dateStr);
+                    console.log('  - currentDate.getTime():', currentDate.getTime());
+                    console.log('  - today.getTime():', today.getTime());
+                    console.log('  - isToday:', isToday);
+                    console.log('  - out-of-range:', isOutOfRange);
+                    foundToday = true;
+                }
                 
                 // 디버깅: 오늘 날짜일 때 로그
                 if (isToday) {
@@ -2137,6 +2154,11 @@
                 if (dayOfWeek === 6) weekNum++;
                 
                 currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            // 디버깅: 루프 결과
+            if (currentView !== 'all') {
+                console.log('📊 루프 완료 - 오늘 날짜 발견:', foundToday, '| 전체 셀 수:', cells.length);
             }
             
             // 마지막 7개 셀에 last-row 클래스 추가
