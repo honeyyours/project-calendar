@@ -1921,7 +1921,7 @@
         
         let confirmedSchedules = JSON.parse(localStorage.getItem('confirmedSchedules')) || {};
         
-        let changeLog = JSON.parse(localStorage.getItem('changeLog')) || {};
+        let changeLog = JSON.parse(localStorage.getItem('changeLog')) || [];
         let currentView = 'all'; // 'all' 또는 프로젝트 ID
         let currentEditKey = null;
         let currentEditProjectId = null;
@@ -1987,6 +1987,13 @@
         // ============================================
         
         function init() {
+            // changeLog 배열 검증 (기존 객체를 배열로 변환)
+            if (!Array.isArray(changeLog)) {
+                console.warn('⚠️ changeLog가 배열이 아닙니다. 초기화합니다.');
+                changeLog = [];
+                localStorage.setItem('changeLog', JSON.stringify(changeLog));
+            }
+            
             renderProjectTabs();
             renderCalendar();
             updateLastSaved();
@@ -2539,20 +2546,26 @@
             // 프로젝트 ID와 날짜 추출
             const [projectId, dateStr] = currentEditKey.split('_');
             
+            console.log('💾 saveSchedule 호출:', { projectId, dateStr, oldContent, newContent: content });
+            
             // 메타데이터와 함께 저장
             setScheduleWithMetadata(currentEditKey, content);
             
-            // 변동 로그 기록
-            if (content) {
-                if (oldContent) {
-                    // 수정
-                    if (oldContent !== content) {
-                        addChangeLog(projectId, dateStr, 'update', oldContent, content);
-                    }
-                } else {
-                    // 추가
-                    addChangeLog(projectId, dateStr, 'add', '', content);
+            // 변동 로그 기록 (수정된 로직)
+            if (oldContent && content) {
+                // 기존 내용이 있고 새 내용도 있음 → 수정
+                if (oldContent !== content) {
+                    console.log('📝 수정 감지!');
+                    addChangeLog(projectId, dateStr, 'update', oldContent, content);
                 }
+            } else if (!oldContent && content) {
+                // 기존 내용 없고 새 내용 있음 → 추가
+                console.log('➕ 추가 감지!');
+                addChangeLog(projectId, dateStr, 'add', '', content);
+            } else if (oldContent && !content) {
+                // 기존 내용 있고 새 내용 없음 → 삭제
+                console.log('❌ 삭제 감지! (빈 칸으로 저장)');
+                addChangeLog(projectId, dateStr, 'delete', oldContent, '');
             }
             
             localStorage.setItem('schedules', JSON.stringify(schedules));
@@ -3435,20 +3448,26 @@
             const oldContent = getScheduleContent(currentMobileEditKey);
             const [projectId, dateStr] = currentMobileEditKey.split('_');
             
+            console.log('💾 saveMobileEdit 호출:', { projectId, dateStr, oldContent, newContent: content });
+            
             // 메타데이터와 함께 저장
             setScheduleWithMetadata(currentMobileEditKey, content);
             
-            // 변동 로그 기록
-            if (content) {
-                if (oldContent) {
-                    // 수정
-                    if (oldContent !== content) {
-                        addChangeLog(projectId, dateStr, 'update', oldContent, content);
-                    }
-                } else {
-                    // 추가
-                    addChangeLog(projectId, dateStr, 'add', '', content);
+            // 변동 로그 기록 (수정된 로직)
+            if (oldContent && content) {
+                // 기존 내용이 있고 새 내용도 있음 → 수정
+                if (oldContent !== content) {
+                    console.log('📝 수정 감지!');
+                    addChangeLog(projectId, dateStr, 'update', oldContent, content);
                 }
+            } else if (!oldContent && content) {
+                // 기존 내용 없고 새 내용 있음 → 추가
+                console.log('➕ 추가 감지!');
+                addChangeLog(projectId, dateStr, 'add', '', content);
+            } else if (oldContent && !content) {
+                // 기존 내용 있고 새 내용 없음 → 삭제
+                console.log('❌ 삭제 감지! (빈 칸으로 저장)');
+                addChangeLog(projectId, dateStr, 'delete', oldContent, '');
             }
             
             // 저장
@@ -3849,10 +3868,19 @@
             
             // changeLog는 배열로 관리
             if (!Array.isArray(changeLog)) {
+                console.warn('⚠️ changeLog가 배열이 아닙니다. 초기화합니다.');
                 changeLog = [];
             }
             
             changeLog.push(logEntry);
+            
+            console.log('📝 변동 로그 추가:', {
+                action: action,
+                project: projectName,
+                date: dateStr,
+                old: oldContent,
+                new: newContent
+            });
             
             // 최근 30일 로그만 유지 (성능 최적화)
             const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
@@ -3860,6 +3888,8 @@
             
             // 저장
             localStorage.setItem('changeLog', JSON.stringify(changeLog));
+            
+            console.log('💾 changeLog 저장됨. 총', changeLog.length, '개');
             
             // Firebase 저장
             if (useFirebase && db) {
@@ -3871,7 +3901,13 @@
             const days = parseInt(document.getElementById('changeLogDays').value) || 3;
             const resultArea = document.getElementById('changeLogResult');
             
+            console.log('🔍 변동 로그 조회 시작');
+            console.log('📊 현재 changeLog:', changeLog);
+            console.log('📊 changeLog 타입:', Array.isArray(changeLog) ? '배열' : typeof changeLog);
+            console.log('📊 changeLog 길이:', changeLog ? changeLog.length : 0);
+            
             if (!Array.isArray(changeLog) || changeLog.length === 0) {
+                console.warn('⚠️ changeLog가 비어있거나 배열이 아닙니다.');
                 resultArea.value = '변동 내역이 없습니다.';
                 document.getElementById('copyChangeLogBtn').style.display = 'none';
                 return;
@@ -3881,8 +3917,13 @@
             const now = Date.now();
             const targetTime = now - (days * 24 * 60 * 60 * 1000);
             
+            console.log('📅 조회 기간:', days, '일');
+            console.log('📅 기준 시간:', new Date(targetTime).toLocaleString());
+            
             // 필터링
             const filteredLogs = changeLog.filter(log => log.timestamp >= targetTime);
+            
+            console.log('🔍 필터링 결과:', filteredLogs.length, '개');
             
             if (filteredLogs.length === 0) {
                 resultArea.value = `최근 ${days}일간 변동 내역이 없습니다.`;
