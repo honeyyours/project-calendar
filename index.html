@@ -4271,26 +4271,40 @@
                     return [];
                 }
                 
+                // once()+on() 대신 on() 단독 사용으로 경쟁 조건 제거
+                // on()은 등록 즉시 현재값으로 1회 발동(=초기화), 이후 변경마다 발동(=실시간 동기화)
+                let changeLogInitialized = false;
                 const changeLogRef = db.ref('changeLog');
-                changeLogRef.once('value', (snapshot) => {
-                    const firebaseChangeLog = normalizeFirebaseArray(snapshot.val());
+                changeLogRef.on('value', (snapshot) => {
+                    const fbChangeLog = normalizeFirebaseArray(snapshot.val());
                     
-                    if (firebaseChangeLog.length > 0) {
-                        console.log('✅ Firebase에서 변동 로그 복원:', firebaseChangeLog.length, '개');
-                        changeLog = firebaseChangeLog;
-                        localStorage.setItem('changeLog', JSON.stringify(changeLog));
-                    } else if (Array.isArray(changeLog) && changeLog.length > 0) {
-                        console.log('📤 로컬 변동 로그를 Firebase에 업로드');
-                        db.ref('changeLog').set(changeLog);
+                    if (!changeLogInitialized) {
+                        // 첫 번째 발동 = 초기화
+                        changeLogInitialized = true;
+                        if (fbChangeLog.length > 0) {
+                            // Firebase에 데이터 있음 → 복원
+                            console.log('✅ Firebase에서 변동 로그 복원:', fbChangeLog.length, '개');
+                            changeLog = fbChangeLog;
+                            localStorage.setItem('changeLog', JSON.stringify(changeLog));
+                        } else if (Array.isArray(changeLog) && changeLog.length > 0) {
+                            // Firebase 비어있고 로컬에 데이터 있음 → Firebase에 업로드
+                            // 로컬 changeLog는 건드리지 않음 (덮어쓰기 금지)
+                            console.log('📤 로컬 변동 로그를 Firebase에 업로드:', changeLog.length, '개');
+                            db.ref('changeLog').set(changeLog);
+                        }
+                        // 둘 다 비어있으면 [] 유지
+                    } else {
+                        // 이후 발동 = 실시간 업데이트 (다른 사용자 변경 반영)
+                        // Firebase에 데이터가 있을 때만 반영 (빈 응답으로 로컬 덮어쓰기 방지)
+                        if (fbChangeLog.length > 0) {
+                            changeLog = fbChangeLog;
+                            localStorage.setItem('changeLog', JSON.stringify(changeLog));
+                        } else if (changeLog.length === 0) {
+                            // 양쪽 다 비어있으면 동기화
+                            changeLog = fbChangeLog;
+                        }
                     }
-                    
-                    // 이후 실시간 동기화
-                    changeLogRef.on('value', (snapshot) => {
-                        const updatedChangeLog = normalizeFirebaseArray(snapshot.val());
-                        changeLog = updatedChangeLog;
-                        localStorage.setItem('changeLog', JSON.stringify(changeLog));
-                    });
-                }).catch(error => {
+                }, (error) => {
                     console.error('❌ Firebase changeLog 읽기 실패:', error);
                     console.error('에러 상세:', error.code, error.message);
                 });
