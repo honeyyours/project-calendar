@@ -1571,6 +1571,20 @@
             margin-right: 4px;
             display: inline-block;
         }
+
+        /* 일정추출 탭 스타일 */
+        .extract-tab {
+            transition: all 0.2s;
+        }
+
+        .extract-tab:hover {
+            color: #F06840 !important;
+        }
+
+        .extract-tab.active {
+            color: #F06840 !important;
+            border-bottom-color: #F06840 !important;
+        }
     </style>
 </head>
 <body>
@@ -1624,7 +1638,7 @@
                 <button class="btn" onclick="openProcessExtractModal()" style="display:inline-flex;align-items:center;gap:6px;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0;">
                         <path d="M3 4.5h18M7.5 9.75h9M10.5 15h3M12 19.5v-4.5"/>
-                    </svg>공정별 일정</button>
+                    </svg>일정추출</button>
                 <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="restoreData(event)">
                 <button class="btn add-project-btn" onclick="openAddProjectModal()" style="display:inline-flex;align-items:center;gap:6px;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0;">
@@ -1771,25 +1785,64 @@
         </div>
     </div>
 
-    <!-- 공정별 일정 추출 모달 -->
+    <!-- 일정추출 모달 (탭 구조) -->
     <div class="modal" id="processExtractModal">
-        <div class="modal-content" style="max-width: 600px;">
-            <h2>📋 공정별 일정 추출</h2>
-            <div class="form-group">
-                <label>공정 키워드 *</label>
-                <input type="text" id="processKeyword" placeholder="예: 목공, 전기, 타일 등" onkeypress="if(event.key==='Enter') extractProcessSchedule()">
-                <div style="margin-top: 4px; font-size: 12px; color: #6b7280;">
-                    오늘 이후 일정만 추출됩니다
+        <div class="modal-content" style="max-width: 700px;">
+            <h2>📋 일정추출</h2>
+            
+            <!-- 탭 메뉴 -->
+            <div class="extract-tabs" style="display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb;">
+                <button class="extract-tab active" onclick="switchExtractTab('process')" data-tab="process" style="padding: 10px 20px; border: none; background: none; cursor: pointer; font-size: 14px; font-weight: 500; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;">
+                    공정별 일정
+                </button>
+                <button class="extract-tab" onclick="switchExtractTab('changelog')" data-tab="changelog" style="padding: 10px 20px; border: none; background: none; cursor: pointer; font-size: 14px; font-weight: 500; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -2px;">
+                    변동일정 조회
+                </button>
+            </div>
+            
+            <!-- 공정별 일정 탭 내용 -->
+            <div id="processTab" class="extract-tab-content">
+                <div class="form-group">
+                    <label>공정 키워드 *</label>
+                    <input type="text" id="processKeyword" placeholder="예: 목공, 전기, 타일 등" onkeypress="if(event.key==='Enter') extractProcessSchedule()">
+                    <div style="margin-top: 4px; font-size: 12px; color: #6b7280;">
+                        오늘 이후 일정만 추출됩니다
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>추출 결과</label>
+                    <textarea id="extractResult" readonly style="min-height: 300px; font-family: monospace; font-size: 13px; line-height: 1.6;"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-secondary" onclick="closeProcessExtractModal()">닫기</button>
+                    <button class="btn-primary" onclick="extractProcessSchedule()">🔍 추출</button>
+                    <button class="btn-primary" onclick="copyExtractResult()" id="copyBtn" style="display: none;">📋 복사</button>
                 </div>
             </div>
-            <div class="form-group">
-                <label>추출 결과</label>
-                <textarea id="extractResult" readonly style="min-height: 300px; font-family: monospace; font-size: 13px; line-height: 1.6;"></textarea>
-            </div>
-            <div class="form-actions">
-                <button class="btn-secondary" onclick="closeProcessExtractModal()">닫기</button>
-                <button class="btn-primary" onclick="extractProcessSchedule()">🔍 추출</button>
-                <button class="btn-primary" onclick="copyExtractResult()" id="copyBtn" style="display: none;">📋 복사</button>
+            
+            <!-- 변동일정 조회 탭 내용 -->
+            <div id="changelogTab" class="extract-tab-content" style="display: none;">
+                <div class="form-group">
+                    <label>조회 기간</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <button class="btn-secondary" onclick="setChangeLogDays(1)" style="flex: 1;">최근 1일</button>
+                        <button class="btn-secondary" onclick="setChangeLogDays(3)" style="flex: 1;">최근 3일</button>
+                        <button class="btn-secondary" onclick="setChangeLogDays(7)" style="flex: 1;">최근 7일</button>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <input type="number" id="changeLogDays" value="3" min="1" max="30" style="flex: 1; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px;">
+                        <span style="color: #6b7280; font-size: 14px;">일간</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>변동 내역</label>
+                    <textarea id="changeLogResult" readonly style="min-height: 300px; font-family: monospace; font-size: 13px; line-height: 1.6; background: #f9fafb;"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-secondary" onclick="closeProcessExtractModal()">닫기</button>
+                    <button class="btn-primary" onclick="extractChangeLog()">📊 조회</button>
+                    <button class="btn-primary" onclick="copyChangeLogResult()" id="copyChangeLogBtn" style="display: none;">📋 복사</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1867,6 +1920,8 @@
         let schedules = JSON.parse(localStorage.getItem('schedules')) || {};
         
         let confirmedSchedules = JSON.parse(localStorage.getItem('confirmedSchedules')) || {};
+        
+        let changeLog = JSON.parse(localStorage.getItem('changeLog')) || {};
         let currentView = 'all'; // 'all' 또는 프로젝트 ID
         let currentEditKey = null;
         let currentEditProjectId = null;
@@ -2478,8 +2533,27 @@
             
             const content = document.getElementById('scheduleContent').value.trim();
             
+            // 변동 로그 기록을 위해 이전 내용 저장
+            const oldContent = getScheduleContent(currentEditKey);
+            
+            // 프로젝트 ID와 날짜 추출
+            const [projectId, dateStr] = currentEditKey.split('_');
+            
             // 메타데이터와 함께 저장
             setScheduleWithMetadata(currentEditKey, content);
+            
+            // 변동 로그 기록
+            if (content) {
+                if (oldContent) {
+                    // 수정
+                    if (oldContent !== content) {
+                        addChangeLog(projectId, dateStr, 'update', oldContent, content);
+                    }
+                } else {
+                    // 추가
+                    addChangeLog(projectId, dateStr, 'add', '', content);
+                }
+            }
             
             localStorage.setItem('schedules', JSON.stringify(schedules));
             
@@ -2497,8 +2571,23 @@
             if (!currentEditKey) return;
             
             if (confirm('이 일정을 삭제하시겠습니까?')) {
+                // 변동 로그 기록을 위해 삭제 전 내용 저장
+                const oldContent = getScheduleContent(currentEditKey);
+                const [projectId, dateStr] = currentEditKey.split('_');
+                
+                // 삭제
                 delete schedules[currentEditKey];
                 localStorage.setItem('schedules', JSON.stringify(schedules));
+                
+                // 변동 로그 기록
+                if (oldContent) {
+                    addChangeLog(projectId, dateStr, 'delete', oldContent, '');
+                }
+                
+                // Firebase 저장
+                if (useFirebase && db) {
+                    db.ref('schedules').set(schedules);
+                }
                 
                 closeEditScheduleModal();
                 renderCalendar();
@@ -3342,8 +3431,25 @@
             
             const content = document.getElementById('mobileEditContent').value.trim();
             
+            // 변동 로그 기록을 위해 이전 내용 저장
+            const oldContent = getScheduleContent(currentMobileEditKey);
+            const [projectId, dateStr] = currentMobileEditKey.split('_');
+            
             // 메타데이터와 함께 저장
             setScheduleWithMetadata(currentMobileEditKey, content);
+            
+            // 변동 로그 기록
+            if (content) {
+                if (oldContent) {
+                    // 수정
+                    if (oldContent !== content) {
+                        addChangeLog(projectId, dateStr, 'update', oldContent, content);
+                    }
+                } else {
+                    // 추가
+                    addChangeLog(projectId, dateStr, 'add', '', content);
+                }
+            }
             
             // 저장
             localStorage.setItem('schedules', JSON.stringify(schedules));
@@ -3372,8 +3478,17 @@
                 return;
             }
             
+            // 변동 로그 기록을 위해 삭제 전 내용 저장
+            const oldContent = getScheduleContent(currentMobileEditKey);
+            const [projectId, dateStr] = currentMobileEditKey.split('_');
+            
             // 일정 삭제
             delete schedules[currentMobileEditKey];
+            
+            // 변동 로그 기록
+            if (oldContent) {
+                addChangeLog(projectId, dateStr, 'delete', oldContent, '');
+            }
             
             // 확정 상태도 삭제
             if (confirmedSchedules[currentMobileEditKey]) {
@@ -3545,14 +3660,54 @@
 
         function openProcessExtractModal() {
             document.getElementById('processExtractModal').style.display = 'flex';
+            
+            // 공정별 일정 탭 초기화
             document.getElementById('processKeyword').value = '';
             document.getElementById('extractResult').value = '';
             document.getElementById('copyBtn').style.display = 'none';
+            
+            // 변동일정 탭 초기화
+            document.getElementById('changeLogDays').value = '3';
+            document.getElementById('changeLogResult').value = '';
+            document.getElementById('copyChangeLogBtn').style.display = 'none';
+            
+            // 첫 번째 탭 (공정별 일정) 활성화
+            switchExtractTab('process');
+            
             document.getElementById('processKeyword').focus();
         }
 
         function closeProcessExtractModal() {
             document.getElementById('processExtractModal').style.display = 'none';
+        }
+
+        // ============================================
+        // 일정추출 탭 전환
+        // ============================================
+        
+        function switchExtractTab(tabName) {
+            // 모든 탭 버튼 비활성화
+            document.querySelectorAll('.extract-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 모든 탭 내용 숨기기
+            document.querySelectorAll('.extract-tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // 선택한 탭 활성화
+            if (tabName === 'process') {
+                document.querySelector('[data-tab="process"]').classList.add('active');
+                document.getElementById('processTab').style.display = 'block';
+            } else if (tabName === 'changelog') {
+                document.querySelector('[data-tab="changelog"]').classList.add('active');
+                document.getElementById('changelogTab').style.display = 'block';
+            }
+        }
+
+        function setChangeLogDays(days) {
+            document.getElementById('changeLogDays').value = days;
         }
 
         function extractProcessSchedule() {
@@ -3654,6 +3809,123 @@
             }).catch(err => {
                 alert('복사에 실패했습니다: ' + err);
             });
+        }
+
+        function copyChangeLogResult() {
+            const resultText = document.getElementById('changeLogResult').value;
+            
+            navigator.clipboard.writeText(resultText).then(() => {
+                const copyBtn = document.getElementById('copyChangeLogBtn');
+                const originalText = copyBtn.textContent;
+                copyBtn.textContent = '✓ 복사됨!';
+                setTimeout(() => {
+                    copyBtn.textContent = originalText;
+                }, 2000);
+            }).catch(err => {
+                alert('복사에 실패했습니다: ' + err);
+            });
+        }
+
+        // ============================================
+        // 변동 로그 관리
+        // ============================================
+
+        function addChangeLog(projectId, dateStr, action, oldContent, newContent) {
+            const timestamp = Date.now();
+            const project = projects.find(p => p.id === projectId);
+            const projectName = project ? project.name : '알 수 없음';
+            const userName = currentUser ? currentUser.name : '알 수 없음';
+            
+            const logEntry = {
+                timestamp: timestamp,
+                date: dateStr,
+                projectId: projectId,
+                projectName: projectName,
+                action: action, // 'add', 'update', 'delete'
+                oldContent: oldContent || '',
+                newContent: newContent || '',
+                userName: userName
+            };
+            
+            // changeLog는 배열로 관리
+            if (!Array.isArray(changeLog)) {
+                changeLog = [];
+            }
+            
+            changeLog.push(logEntry);
+            
+            // 최근 30일 로그만 유지 (성능 최적화)
+            const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+            changeLog = changeLog.filter(log => log.timestamp > thirtyDaysAgo);
+            
+            // 저장
+            localStorage.setItem('changeLog', JSON.stringify(changeLog));
+            
+            // Firebase 저장
+            if (useFirebase && db) {
+                db.ref('changeLog').set(changeLog);
+            }
+        }
+
+        function extractChangeLog() {
+            const days = parseInt(document.getElementById('changeLogDays').value) || 3;
+            const resultArea = document.getElementById('changeLogResult');
+            
+            if (!Array.isArray(changeLog) || changeLog.length === 0) {
+                resultArea.value = '변동 내역이 없습니다.';
+                document.getElementById('copyChangeLogBtn').style.display = 'none';
+                return;
+            }
+            
+            // 조회 기간 계산
+            const now = Date.now();
+            const targetTime = now - (days * 24 * 60 * 60 * 1000);
+            
+            // 필터링
+            const filteredLogs = changeLog.filter(log => log.timestamp >= targetTime);
+            
+            if (filteredLogs.length === 0) {
+                resultArea.value = `최근 ${days}일간 변동 내역이 없습니다.`;
+                document.getElementById('copyChangeLogBtn').style.display = 'none';
+                return;
+            }
+            
+            // 최신순 정렬
+            filteredLogs.sort((a, b) => b.timestamp - a.timestamp);
+            
+            // 결과 생성
+            let result = `📊 변동일정 조회 결과 (최근 ${days}일)\n`;
+            result += `조회 시간: ${new Date().toLocaleString('ko-KR')}\n`;
+            result += `총 ${filteredLogs.length}건의 변동사항\n`;
+            result += `${'='.repeat(60)}\n\n`;
+            
+            filteredLogs.forEach((log, index) => {
+                const logDate = new Date(log.timestamp);
+                const timeStr = `${logDate.getMonth() + 1}/${logDate.getDate()} ${logDate.getHours()}:${String(logDate.getMinutes()).padStart(2, '0')}`;
+                
+                result += `[${index + 1}] ${timeStr} - ${log.projectName} (${log.date})\n`;
+                
+                if (log.action === 'add') {
+                    result += `   ➕ 추가: ${log.newContent}\n`;
+                    result += `   작성자: ${log.userName}\n`;
+                } else if (log.action === 'delete') {
+                    result += `   ❌ 삭제: ${log.oldContent}\n`;
+                    result += `   작성자: ${log.userName}\n`;
+                } else if (log.action === 'update') {
+                    result += `   ✏️ 수정\n`;
+                    result += `   이전: ${log.oldContent}\n`;
+                    result += `   이후: ${log.newContent}\n`;
+                    result += `   작성자: ${log.userName}\n`;
+                }
+                
+                result += `\n`;
+            });
+            
+            result += `${'='.repeat(60)}\n`;
+            result += `※ 최근 30일간의 변동 내역만 저장됩니다.`;
+            
+            resultArea.value = result;
+            document.getElementById('copyChangeLogBtn').style.display = 'inline-block';
         }
 
         // ============================================
@@ -3939,6 +4211,33 @@
                     console.error('❌ Firebase projects 읽기 실패:', error);
                     console.error('에러 상세:', error.code, error.message);
                     renderCalendar(); // 에러 메시지 표시
+                });
+                
+                // 변동 로그 동기화
+                const changeLogRef = db.ref('changeLog');
+                changeLogRef.once('value', (snapshot) => {
+                    const firebaseChangeLog = snapshot.val() || [];
+                    
+                    if (Array.isArray(firebaseChangeLog) && firebaseChangeLog.length > 0) {
+                        console.log('✅ Firebase에서 변동 로그 복원:', firebaseChangeLog.length, '개');
+                        changeLog = firebaseChangeLog;
+                        localStorage.setItem('changeLog', JSON.stringify(changeLog));
+                    } else if (Array.isArray(changeLog) && changeLog.length > 0) {
+                        console.log('📤 로컬 변동 로그를 Firebase에 업로드');
+                        db.ref('changeLog').set(changeLog);
+                    }
+                    
+                    // 이후 실시간 동기화
+                    changeLogRef.on('value', (snapshot) => {
+                        const updatedChangeLog = snapshot.val() || [];
+                        if (Array.isArray(updatedChangeLog)) {
+                            changeLog = updatedChangeLog;
+                            localStorage.setItem('changeLog', JSON.stringify(changeLog));
+                        }
+                    });
+                }).catch(error => {
+                    console.error('❌ Firebase changeLog 읽기 실패:', error);
+                    console.error('에러 상세:', error.code, error.message);
                 });
             }
             
