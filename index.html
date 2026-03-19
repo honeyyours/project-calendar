@@ -4219,9 +4219,17 @@
                 });
                 
                 // 프로젝트 데이터 동기화
+                // Firebase는 배열을 객체로 저장하므로 Object.values()로 변환 필요
+                function normalizeFirebaseProjects(val) {
+                    if (!val) return [];
+                    if (Array.isArray(val)) return val;
+                    if (typeof val === 'object') return Object.values(val);
+                    return [];
+                }
+                
                 const projectsRef = db.ref('projects');
                 projectsRef.once('value', (snapshot) => {
-                    const firebaseProjects = snapshot.val() || [];
+                    const firebaseProjects = normalizeFirebaseProjects(snapshot.val());
                     
                     if (firebaseProjects.length > 0) {
                         console.log('✅ Firebase에서 프로젝트 데이터 복원:', firebaseProjects.length, '개');
@@ -4241,7 +4249,7 @@
                     
                     // 이후 실시간 동기화
                     projectsRef.on('value', (snapshot) => {
-                        const updatedProjects = snapshot.val() || [];
+                        const updatedProjects = normalizeFirebaseProjects(snapshot.val());
                         projects = updatedProjects;
                         localStorage.setItem('projects', JSON.stringify(projects));
                         renderProjectTabs();
@@ -4255,11 +4263,19 @@
                 });
                 
                 // 변동 로그 동기화
+                // Firebase는 배열을 객체({0:..., 1:...})로 저장하므로 Object.values()로 변환 필요
+                function normalizeFirebaseArray(val) {
+                    if (!val) return [];
+                    if (Array.isArray(val)) return val;
+                    if (typeof val === 'object') return Object.values(val);
+                    return [];
+                }
+                
                 const changeLogRef = db.ref('changeLog');
                 changeLogRef.once('value', (snapshot) => {
-                    const firebaseChangeLog = snapshot.val() || [];
+                    const firebaseChangeLog = normalizeFirebaseArray(snapshot.val());
                     
-                    if (Array.isArray(firebaseChangeLog) && firebaseChangeLog.length > 0) {
+                    if (firebaseChangeLog.length > 0) {
                         console.log('✅ Firebase에서 변동 로그 복원:', firebaseChangeLog.length, '개');
                         changeLog = firebaseChangeLog;
                         localStorage.setItem('changeLog', JSON.stringify(changeLog));
@@ -4270,11 +4286,9 @@
                     
                     // 이후 실시간 동기화
                     changeLogRef.on('value', (snapshot) => {
-                        const updatedChangeLog = snapshot.val() || [];
-                        if (Array.isArray(updatedChangeLog)) {
-                            changeLog = updatedChangeLog;
-                            localStorage.setItem('changeLog', JSON.stringify(changeLog));
-                        }
+                        const updatedChangeLog = normalizeFirebaseArray(snapshot.val());
+                        changeLog = updatedChangeLog;
+                        localStorage.setItem('changeLog', JSON.stringify(changeLog));
                     });
                 }).catch(error => {
                     console.error('❌ Firebase changeLog 읽기 실패:', error);
