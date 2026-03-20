@@ -1598,16 +1598,9 @@
         .checklist-header {
             padding: 16px 20px;
             background: #f9fafb;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: background 0.2s;
-            user-select: none;
-        }
-
-        .checklist-header:hover {
-            background: #f3f4f6;
         }
 
         .checklist-title {
@@ -1622,16 +1615,6 @@
         .checklist-summary {
             font-size: 13px;
             color: #6b7280;
-        }
-
-        .checklist-toggle {
-            font-size: 12px;
-            color: #9ca3af;
-            transition: transform 0.2s;
-        }
-
-        .checklist-toggle.open {
-            transform: rotate(180deg);
         }
 
         .checklist-body {
@@ -2234,6 +2217,7 @@
             renderCalendar();
             updateLastSaved();
             renderLegend();
+            renderChecklist(); // 체크리스트 렌더링 추가
             setupKeyboardNavigation();
             setupContextMenuClose();
             // 초기 필터 컨테이너 표시
@@ -3042,7 +3026,8 @@
                 type: 'all',
                 projects: projects,
                 schedules: schedules,
-                confirmedSchedules: confirmedSchedules
+                confirmedSchedules: confirmedSchedules,
+                checkLists: checkLists
             };
             
             const dataStr = JSON.stringify(backupData, null, 2);
@@ -3082,13 +3067,20 @@
                 }
             });
             
+            // 해당 프로젝트의 체크리스트
+            const projectCheckLists = {};
+            if (checkLists[currentView]) {
+                projectCheckLists[currentView] = checkLists[currentView];
+            }
+            
             const backupData = {
                 version: '4.0',
                 timestamp: new Date().toISOString(),
                 type: 'project',
                 project: project,
                 schedules: projectSchedules,
-                confirmedSchedules: projectConfirmed
+                confirmedSchedules: projectConfirmed,
+                checkLists: projectCheckLists
             };
             
             const dataStr = JSON.stringify(backupData, null, 2);
@@ -3214,10 +3206,12 @@
                     projects = backupData.projects;
                     schedules = backupData.schedules;
                     confirmedSchedules = backupData.confirmedSchedules || {};
+                    checkLists = backupData.checkLists || {};
                     
                     localStorage.setItem('projects', JSON.stringify(projects));
                     localStorage.setItem('schedules', JSON.stringify(schedules));
                     localStorage.setItem('confirmedSchedules', JSON.stringify(confirmedSchedules));
+                    localStorage.setItem('checkLists', JSON.stringify(checkLists));
                     
                     // Firebase 저장 (추가!)
                     if (useFirebase && db) {
@@ -3230,6 +3224,9 @@
                         db.ref('confirmedSchedules').set(confirmedSchedules).then(() => {
                             console.log('✅ Firebase confirmedSchedules 저장 완료');
                         });
+                        db.ref('checkLists').set(checkLists).then(() => {
+                            console.log('✅ Firebase checkLists 저장 완료');
+                        });
                     }
                     
                     // UI 업데이트
@@ -3237,6 +3234,7 @@
                     renderProjectTabs();
                     renderCalendar();
                     renderLegend();
+                    renderChecklist();
                     showSaveIndicator('복원 완료');
                     
                     event.target.value = ''; // 파일 선택 초기화
@@ -3327,16 +3325,15 @@
             
             checklistSection.innerHTML = `
                 <div class="project-checklist">
-                    <div class="checklist-header" onclick="toggleChecklist()">
+                    <div class="checklist-header">
                         <div class="checklist-title">
                             📋 ${project.name} 체크리스트
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <span class="checklist-summary">${todoItems.length}개 진행중</span>
-                            <span class="checklist-toggle" id="checklistToggle">▼</span>
                         </div>
                     </div>
-                    <div class="checklist-body" id="checklistBody" style="display: none;">
+                    <div class="checklist-body" id="checklistBody" style="display: block;">
                         <div class="checklist-add-section">
                             <input 
                                 type="text" 
@@ -3406,19 +3403,6 @@
                     </div>
                 </div>
             `;
-        }
-
-        function toggleChecklist() {
-            const body = document.getElementById('checklistBody');
-            const toggle = document.getElementById('checklistToggle');
-            
-            if (body.style.display === 'none') {
-                body.style.display = 'block';
-                toggle.classList.add('open');
-            } else {
-                body.style.display = 'none';
-                toggle.classList.remove('open');
-            }
         }
 
         function addChecklistItem() {
