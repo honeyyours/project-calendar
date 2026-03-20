@@ -1626,6 +1626,7 @@
             margin-bottom: 20px;
             display: flex;
             gap: 8px;
+            flex-wrap: wrap; /* 모바일에서 줄바꿈 허용 */
         }
 
         .checklist-add-input {
@@ -1794,6 +1795,15 @@
         @media (max-width: 768px) {
             .checklist-container {
                 grid-template-columns: 1fr;
+            }
+            
+            .checklist-add-section {
+                flex-direction: column;
+            }
+            
+            .checklist-add-input,
+            .checklist-category-select {
+                width: 100%;
             }
         }
     </style>
@@ -3299,13 +3309,73 @@
         function renderChecklist() {
             const checklistSection = document.getElementById('checklistSection');
             
-            // 전체 뷰일 때는 체크리스트 숨김
+            // 전체 뷰일 때: 모든 프로젝트의 체크리스트 표시
             if (currentView === 'all') {
-                checklistSection.style.display = 'none';
+                checklistSection.style.display = 'block';
+                
+                let allChecklistsHTML = '';
+                
+                projects.forEach(project => {
+                    // 프로젝트별 체크리스트 데이터 초기화
+                    if (!checkLists[project.id]) {
+                        checkLists[project.id] = { items: [] };
+                    }
+                    
+                    const projectChecklist = checkLists[project.id];
+                    const todoItems = projectChecklist.items.filter(item => !item.completed);
+                    const doneItems = projectChecklist.items.filter(item => item.completed);
+                    
+                    // 항목이 없으면 건너뛰기
+                    if (todoItems.length === 0 && doneItems.length === 0) {
+                        return;
+                    }
+                    
+                    allChecklistsHTML += `
+                        <div class="project-checklist" style="margin-bottom: 16px;">
+                            <div class="checklist-header">
+                                <div class="checklist-title">
+                                    📋 ${project.name} 체크리스트
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <span class="checklist-summary">${todoItems.length}개 진행중</span>
+                                </div>
+                            </div>
+                            <div class="checklist-body" style="display: block;">
+                                <div class="checklist-container">
+                                    <div class="checklist-column">
+                                        <div class="checklist-column-title">
+                                            ⬜ 해야할 일 (${todoItems.length})
+                                        </div>
+                                        ${todoItems.length > 0 ? todoItems.map(item => renderChecklistItem(item, project.id)).join('') : '<div class="checklist-empty">아직 할 일이 없습니다</div>'}
+                                    </div>
+                                    <div class="checklist-column">
+                                        <div class="checklist-column-title">
+                                            ✅ 완료된 일 (${doneItems.length})
+                                        </div>
+                                        ${doneItems.length > 0 ? doneItems.map(item => renderChecklistItem(item, project.id)).join('') : '<div class="checklist-empty">완료된 항목이 없습니다</div>'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                if (allChecklistsHTML) {
+                    checklistSection.innerHTML = allChecklistsHTML;
+                } else {
+                    checklistSection.innerHTML = `
+                        <div class="project-checklist">
+                            <div class="checklist-body" style="display: block;">
+                                <div class="checklist-empty" style="padding: 40px;">체크리스트가 없습니다</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
                 return;
             }
             
-            // 개별 프로젝트일 때만 표시
+            // 개별 프로젝트 뷰
             const project = projects.find(p => p.id === currentView);
             if (!project) {
                 checklistSection.style.display = 'none';
@@ -3349,20 +3419,24 @@
                                 <option value="잔손">잔손</option>
                                 <option value="긴급">긴급</option>
                             </select>
-                            <button class="btn-primary" onclick="addChecklistItem()">추가</button>
+                            <button class="btn add-project-btn" onclick="addChecklistItem()" style="display:inline-flex;align-items:center;gap:6px;">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:block;flex-shrink:0;">
+                                    <path d="M12 4.5v15m7.5-7.5h-15"/>
+                                </svg>추가
+                            </button>
                         </div>
                         <div class="checklist-container">
                             <div class="checklist-column">
                                 <div class="checklist-column-title">
                                     ⬜ 해야할 일 (${todoItems.length})
                                 </div>
-                                ${todoItems.length > 0 ? todoItems.map(item => renderChecklistItem(item)).join('') : '<div class="checklist-empty">아직 할 일이 없습니다</div>'}
+                                ${todoItems.length > 0 ? todoItems.map(item => renderChecklistItem(item, currentView)).join('') : '<div class="checklist-empty">아직 할 일이 없습니다</div>'}
                             </div>
                             <div class="checklist-column">
                                 <div class="checklist-column-title">
                                     ✅ 완료된 일 (${doneItems.length})
                                 </div>
-                                ${doneItems.length > 0 ? doneItems.map(item => renderChecklistItem(item)).join('') : '<div class="checklist-empty">완료된 항목이 없습니다</div>'}
+                                ${doneItems.length > 0 ? doneItems.map(item => renderChecklistItem(item, currentView)).join('') : '<div class="checklist-empty">완료된 항목이 없습니다</div>'}
                             </div>
                         </div>
                     </div>
@@ -3370,7 +3444,7 @@
             `;
         }
 
-        function renderChecklistItem(item) {
+        function renderChecklistItem(item, projectId) {
             const createdDate = new Date(item.createdAt);
             const createdTimeStr = `${createdDate.getMonth() + 1}/${createdDate.getDate()} ${createdDate.getHours()}:${String(createdDate.getMinutes()).padStart(2, '0')}`;
             
@@ -3387,7 +3461,7 @@
                             type="checkbox" 
                             class="checklist-checkbox" 
                             ${item.completed ? 'checked' : ''}
-                            onchange="toggleChecklistItem('${item.id}')"
+                            onchange="toggleChecklistItem('${item.id}', '${projectId}')"
                         >
                         <div style="flex: 1;">
                             <div class="checklist-item-content">${item.content}</div>
@@ -3396,8 +3470,8 @@
                                 <span class="checklist-item-time">${item.completed ? `완료: ${completedTimeStr}` : `등록: ${createdTimeStr}`}</span>
                             </div>
                             <div class="checklist-item-actions">
-                                ${!item.completed ? `<button class="checklist-item-btn" onclick="editChecklistItem('${item.id}')">✏️ 수정</button>` : ''}
-                                <button class="checklist-item-btn" onclick="deleteChecklistItem('${item.id}')">🗑️ 삭제</button>
+                                ${!item.completed ? `<button class="checklist-item-btn" onclick="editChecklistItem('${item.id}', '${projectId}')">✏️ 수정</button>` : ''}
+                                <button class="checklist-item-btn" onclick="deleteChecklistItem('${item.id}', '${projectId}')">🗑️ 삭제</button>
                             </div>
                         </div>
                     </div>
@@ -3448,8 +3522,8 @@
             console.log('✅ 체크리스트 항목 추가:', newItem);
         }
 
-        function toggleChecklistItem(itemId) {
-            const projectChecklist = checkLists[currentView];
+        function toggleChecklistItem(itemId, projectId) {
+            const projectChecklist = checkLists[projectId];
             if (!projectChecklist) return;
             
             const item = projectChecklist.items.find(i => i.id === itemId);
@@ -3472,8 +3546,8 @@
             console.log('✅ 체크리스트 항목 토글:', item);
         }
 
-        function editChecklistItem(itemId) {
-            const projectChecklist = checkLists[currentView];
+        function editChecklistItem(itemId, projectId) {
+            const projectChecklist = checkLists[projectId];
             if (!projectChecklist) return;
             
             const item = projectChecklist.items.find(i => i.id === itemId);
@@ -3503,10 +3577,10 @@
             console.log('✅ 체크리스트 항목 수정:', item);
         }
 
-        function deleteChecklistItem(itemId) {
+        function deleteChecklistItem(itemId, projectId) {
             if (!confirm('이 항목을 삭제하시겠습니까?')) return;
             
-            const projectChecklist = checkLists[currentView];
+            const projectChecklist = checkLists[projectId];
             if (!projectChecklist) return;
             
             projectChecklist.items = projectChecklist.items.filter(i => i.id !== itemId);
