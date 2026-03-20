@@ -1585,6 +1585,234 @@
             color: #F06840 !important;
             border-bottom-color: #F06840 !important;
         }
+
+        /* 체크리스트 스타일 */
+        .project-checklist {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 16px;
+            overflow: hidden;
+        }
+
+        .checklist-header {
+            padding: 16px 20px;
+            background: #f9fafb;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .checklist-header:hover {
+            background: #f3f4f6;
+        }
+
+        .checklist-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checklist-summary {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .checklist-toggle {
+            font-size: 12px;
+            color: #9ca3af;
+            transition: transform 0.2s;
+        }
+
+        .checklist-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .checklist-body {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .checklist-add-section {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .checklist-add-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .checklist-add-input:focus {
+            outline: none;
+            border-color: #F06840;
+        }
+
+        .checklist-category-select {
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .checklist-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .checklist-column {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .checklist-column-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #4b5563;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .checklist-item {
+            background: white;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s;
+        }
+
+        .checklist-item:hover {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-color: #d1d5db;
+        }
+
+        .checklist-item-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .checklist-checkbox {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checklist-item-content {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #1f2937;
+            word-break: break-word;
+        }
+
+        .checklist-item.completed .checklist-item-content {
+            color: #9ca3af;
+            text-decoration: line-through;
+        }
+
+        .checklist-item-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+
+        .checklist-category-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .checklist-category-고객요청 {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .checklist-category-디자인팀 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .checklist-category-잔손 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .checklist-category-긴급 {
+            background: #fee2e2;
+            color: #991b1b;
+            font-weight: 600;
+        }
+
+        .checklist-category-일반 {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .checklist-item-time {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .checklist-item-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .checklist-item-btn {
+            font-size: 11px;
+            padding: 4px 8px;
+            border: none;
+            background: #f3f4f6;
+            color: #6b7280;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .checklist-item-btn:hover {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .checklist-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #d1d5db;
+            font-size: 14px;
+        }
+
+        /* 모바일 대응 */
+        @media (max-width: 768px) {
+            .checklist-container {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1698,6 +1926,11 @@
                     <!-- 동적 생성 -->
                 </div>
             </div>
+        </div>
+
+        <!-- 체크리스트 섹션 -->
+        <div id="checklistSection" style="margin-top: 20px; display: none;">
+            <!-- 프로젝트별 체크리스트 동적 생성 -->
         </div>
 
         <div class="legend" id="legend">
@@ -1922,6 +2155,9 @@
         let confirmedSchedules = JSON.parse(localStorage.getItem('confirmedSchedules')) || {};
         
         let changeLog = JSON.parse(localStorage.getItem('changeLog')) || [];
+        
+        let checkLists = JSON.parse(localStorage.getItem('checkLists')) || {};
+        
         let currentView = 'all'; // 'all' 또는 프로젝트 ID
         let currentEditKey = null;
         let currentEditProjectId = null;
@@ -2043,6 +2279,7 @@
             renderProjectTabs();
             renderCalendar();
             renderLegend();
+            renderChecklist(); // 체크리스트 렌더링 추가
         }
 
         // ============================================
@@ -2472,26 +2709,10 @@
         function saveCellDirect(key, value, dateStr) {
             const trimmedValue = value.trim();
             
-            // 변동 로그를 위해 저장 전에 이전 내용 가져오기
-            const oldContent = getScheduleContent(key);
-            // key = "projectId_dateStr" 형식에서 projectId 추출
-            const projectId = key.replace('_' + dateStr, '');
-            
             if (trimmedValue) {
                 schedules[key] = trimmedValue;
             } else {
                 delete schedules[key];
-            }
-            
-            // 변동 로그 기록
-            if (oldContent && trimmedValue) {
-                if (oldContent !== trimmedValue) {
-                    addChangeLog(projectId, dateStr, 'update', oldContent, trimmedValue);
-                }
-            } else if (!oldContent && trimmedValue) {
-                addChangeLog(projectId, dateStr, 'add', '', trimmedValue);
-            } else if (oldContent && !trimmedValue) {
-                addChangeLog(projectId, dateStr, 'delete', oldContent, '');
             }
             
             localStorage.setItem('schedules', JSON.stringify(schedules));
@@ -3071,6 +3292,253 @@
                     `<div class="legend-item">${item}</div>`
                 ).join('');
             }
+        }
+
+        // ============================================
+        // 체크리스트 관리
+        // ============================================
+
+        function renderChecklist() {
+            const checklistSection = document.getElementById('checklistSection');
+            
+            // 전체 뷰일 때는 체크리스트 숨김
+            if (currentView === 'all') {
+                checklistSection.style.display = 'none';
+                return;
+            }
+            
+            // 개별 프로젝트일 때만 표시
+            const project = projects.find(p => p.id === currentView);
+            if (!project) {
+                checklistSection.style.display = 'none';
+                return;
+            }
+            
+            checklistSection.style.display = 'block';
+            
+            // 체크리스트 데이터 초기화
+            if (!checkLists[currentView]) {
+                checkLists[currentView] = { items: [] };
+            }
+            
+            const projectChecklist = checkLists[currentView];
+            const todoItems = projectChecklist.items.filter(item => !item.completed);
+            const doneItems = projectChecklist.items.filter(item => item.completed);
+            
+            checklistSection.innerHTML = `
+                <div class="project-checklist">
+                    <div class="checklist-header" onclick="toggleChecklist()">
+                        <div class="checklist-title">
+                            📋 ${project.name} 체크리스트
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="checklist-summary">${todoItems.length}개 진행중</span>
+                            <span class="checklist-toggle" id="checklistToggle">▼</span>
+                        </div>
+                    </div>
+                    <div class="checklist-body" id="checklistBody" style="display: none;">
+                        <div class="checklist-add-section">
+                            <input 
+                                type="text" 
+                                id="checklistInput" 
+                                class="checklist-add-input" 
+                                placeholder="새 항목 입력 (예: 주방 타일 색상 확인)"
+                                onkeypress="if(event.key==='Enter') addChecklistItem()"
+                            >
+                            <select id="checklistCategory" class="checklist-category-select">
+                                <option value="일반">일반</option>
+                                <option value="고객요청">고객요청</option>
+                                <option value="디자인팀">디자인팀</option>
+                                <option value="잔손">잔손</option>
+                                <option value="긴급">긴급</option>
+                            </select>
+                            <button class="btn-primary" onclick="addChecklistItem()">추가</button>
+                        </div>
+                        <div class="checklist-container">
+                            <div class="checklist-column">
+                                <div class="checklist-column-title">
+                                    ⬜ 해야할 일 (${todoItems.length})
+                                </div>
+                                ${todoItems.length > 0 ? todoItems.map(item => renderChecklistItem(item)).join('') : '<div class="checklist-empty">아직 할 일이 없습니다</div>'}
+                            </div>
+                            <div class="checklist-column">
+                                <div class="checklist-column-title">
+                                    ✅ 완료된 일 (${doneItems.length})
+                                </div>
+                                ${doneItems.length > 0 ? doneItems.map(item => renderChecklistItem(item)).join('') : '<div class="checklist-empty">완료된 항목이 없습니다</div>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderChecklistItem(item) {
+            const createdDate = new Date(item.createdAt);
+            const createdTimeStr = `${createdDate.getMonth() + 1}/${createdDate.getDate()} ${createdDate.getHours()}:${String(createdDate.getMinutes()).padStart(2, '0')}`;
+            
+            let completedTimeStr = '';
+            if (item.completedAt) {
+                const completedDate = new Date(item.completedAt);
+                completedTimeStr = `${completedDate.getMonth() + 1}/${completedDate.getDate()} ${completedDate.getHours()}:${String(completedDate.getMinutes()).padStart(2, '0')}`;
+            }
+            
+            return `
+                <div class="checklist-item ${item.completed ? 'completed' : ''}">
+                    <div class="checklist-item-header">
+                        <input 
+                            type="checkbox" 
+                            class="checklist-checkbox" 
+                            ${item.completed ? 'checked' : ''}
+                            onchange="toggleChecklistItem('${item.id}')"
+                        >
+                        <div style="flex: 1;">
+                            <div class="checklist-item-content">${item.content}</div>
+                            <div class="checklist-item-meta">
+                                <span class="checklist-category-badge checklist-category-${item.category}">${item.category}</span>
+                                <span class="checklist-item-time">${item.completed ? `완료: ${completedTimeStr}` : `등록: ${createdTimeStr}`}</span>
+                            </div>
+                            <div class="checklist-item-actions">
+                                ${!item.completed ? `<button class="checklist-item-btn" onclick="editChecklistItem('${item.id}')">✏️ 수정</button>` : ''}
+                                <button class="checklist-item-btn" onclick="deleteChecklistItem('${item.id}')">🗑️ 삭제</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleChecklist() {
+            const body = document.getElementById('checklistBody');
+            const toggle = document.getElementById('checklistToggle');
+            
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                toggle.classList.add('open');
+            } else {
+                body.style.display = 'none';
+                toggle.classList.remove('open');
+            }
+        }
+
+        function addChecklistItem() {
+            const input = document.getElementById('checklistInput');
+            const categorySelect = document.getElementById('checklistCategory');
+            const content = input.value.trim();
+            
+            if (!content) {
+                alert('항목 내용을 입력해주세요.');
+                return;
+            }
+            
+            if (!checkLists[currentView]) {
+                checkLists[currentView] = { items: [] };
+            }
+            
+            const newItem = {
+                id: 'checklist_' + Date.now(),
+                content: content,
+                completed: false,
+                category: categorySelect.value,
+                createdAt: Date.now(),
+                completedAt: null
+            };
+            
+            checkLists[currentView].items.push(newItem);
+            
+            // 저장
+            localStorage.setItem('checkLists', JSON.stringify(checkLists));
+            
+            // Firebase 저장
+            if (useFirebase && db) {
+                db.ref('checkLists').set(checkLists);
+            }
+            
+            // 초기화
+            input.value = '';
+            categorySelect.value = '일반';
+            
+            // 렌더링
+            renderChecklist();
+            
+            console.log('✅ 체크리스트 항목 추가:', newItem);
+        }
+
+        function toggleChecklistItem(itemId) {
+            const projectChecklist = checkLists[currentView];
+            if (!projectChecklist) return;
+            
+            const item = projectChecklist.items.find(i => i.id === itemId);
+            if (!item) return;
+            
+            item.completed = !item.completed;
+            item.completedAt = item.completed ? Date.now() : null;
+            
+            // 저장
+            localStorage.setItem('checkLists', JSON.stringify(checkLists));
+            
+            // Firebase 저장
+            if (useFirebase && db) {
+                db.ref('checkLists').set(checkLists);
+            }
+            
+            // 렌더링
+            renderChecklist();
+            
+            console.log('✅ 체크리스트 항목 토글:', item);
+        }
+
+        function editChecklistItem(itemId) {
+            const projectChecklist = checkLists[currentView];
+            if (!projectChecklist) return;
+            
+            const item = projectChecklist.items.find(i => i.id === itemId);
+            if (!item) return;
+            
+            const newContent = prompt('항목 내용 수정:', item.content);
+            if (newContent === null) return; // 취소
+            
+            if (!newContent.trim()) {
+                alert('항목 내용을 입력해주세요.');
+                return;
+            }
+            
+            item.content = newContent.trim();
+            
+            // 저장
+            localStorage.setItem('checkLists', JSON.stringify(checkLists));
+            
+            // Firebase 저장
+            if (useFirebase && db) {
+                db.ref('checkLists').set(checkLists);
+            }
+            
+            // 렌더링
+            renderChecklist();
+            
+            console.log('✅ 체크리스트 항목 수정:', item);
+        }
+
+        function deleteChecklistItem(itemId) {
+            if (!confirm('이 항목을 삭제하시겠습니까?')) return;
+            
+            const projectChecklist = checkLists[currentView];
+            if (!projectChecklist) return;
+            
+            projectChecklist.items = projectChecklist.items.filter(i => i.id !== itemId);
+            
+            // 저장
+            localStorage.setItem('checkLists', JSON.stringify(checkLists));
+            
+            // Firebase 저장
+            if (useFirebase && db) {
+                db.ref('checkLists').set(checkLists);
+            }
+            
+            // 렌더링
+            renderChecklist();
+            
+            console.log('🗑️ 체크리스트 항목 삭제:', itemId);
         }
 
         // ============================================
@@ -4235,17 +4703,9 @@
                 });
                 
                 // 프로젝트 데이터 동기화
-                // Firebase는 배열을 객체로 저장하므로 Object.values()로 변환 필요
-                function normalizeFirebaseProjects(val) {
-                    if (!val) return [];
-                    if (Array.isArray(val)) return val;
-                    if (typeof val === 'object') return Object.values(val);
-                    return [];
-                }
-                
                 const projectsRef = db.ref('projects');
                 projectsRef.once('value', (snapshot) => {
-                    const firebaseProjects = normalizeFirebaseProjects(snapshot.val());
+                    const firebaseProjects = snapshot.val() || [];
                     
                     if (firebaseProjects.length > 0) {
                         console.log('✅ Firebase에서 프로젝트 데이터 복원:', firebaseProjects.length, '개');
@@ -4265,7 +4725,7 @@
                     
                     // 이후 실시간 동기화
                     projectsRef.on('value', (snapshot) => {
-                        const updatedProjects = normalizeFirebaseProjects(snapshot.val());
+                        const updatedProjects = snapshot.val() || [];
                         projects = updatedProjects;
                         localStorage.setItem('projects', JSON.stringify(projects));
                         renderProjectTabs();
@@ -4279,39 +4739,56 @@
                 });
                 
                 // 변동 로그 동기화
-                // Firebase는 배열을 객체({0:..., 1:...})로 저장 → Object.values()로 변환
-                function normalizeFirebaseArray(val) {
-                    if (!val) return [];
-                    if (Array.isArray(val)) return val;
-                    if (typeof val === 'object') return Object.values(val);
-                    return [];
-                }
-                
-                // once()+on() 경쟁 조건 제거: on() 단독 + 초기화 플래그 방식
-                let changeLogInitialized = false;
                 const changeLogRef = db.ref('changeLog');
-                changeLogRef.on('value', (snapshot) => {
-                    const fbChangeLog = normalizeFirebaseArray(snapshot.val());
+                changeLogRef.once('value', (snapshot) => {
+                    const firebaseChangeLog = snapshot.val() || [];
                     
-                    if (!changeLogInitialized) {
-                        changeLogInitialized = true;
-                        if (fbChangeLog.length > 0) {
-                            console.log('✅ Firebase에서 변동 로그 복원:', fbChangeLog.length, '개');
-                            changeLog = fbChangeLog;
-                            localStorage.setItem('changeLog', JSON.stringify(changeLog));
-                        } else if (Array.isArray(changeLog) && changeLog.length > 0) {
-                            console.log('📤 로컬 변동 로그를 Firebase에 업로드:', changeLog.length, '개');
-                            db.ref('changeLog').set(changeLog);
-                        }
-                    } else {
-                        // 실시간 업데이트: 데이터가 있을 때만 반영
-                        if (fbChangeLog.length > 0) {
-                            changeLog = fbChangeLog;
-                            localStorage.setItem('changeLog', JSON.stringify(changeLog));
-                        }
+                    if (Array.isArray(firebaseChangeLog) && firebaseChangeLog.length > 0) {
+                        console.log('✅ Firebase에서 변동 로그 복원:', firebaseChangeLog.length, '개');
+                        changeLog = firebaseChangeLog;
+                        localStorage.setItem('changeLog', JSON.stringify(changeLog));
+                    } else if (Array.isArray(changeLog) && changeLog.length > 0) {
+                        console.log('📤 로컬 변동 로그를 Firebase에 업로드');
+                        db.ref('changeLog').set(changeLog);
                     }
-                }, (error) => {
+                    
+                    // 이후 실시간 동기화
+                    changeLogRef.on('value', (snapshot) => {
+                        const updatedChangeLog = snapshot.val() || [];
+                        if (Array.isArray(updatedChangeLog)) {
+                            changeLog = updatedChangeLog;
+                            localStorage.setItem('changeLog', JSON.stringify(changeLog));
+                        }
+                    });
+                }).catch(error => {
                     console.error('❌ Firebase changeLog 읽기 실패:', error);
+                    console.error('에러 상세:', error.code, error.message);
+                });
+                
+                // 체크리스트 동기화
+                const checkListsRef = db.ref('checkLists');
+                checkListsRef.once('value', (snapshot) => {
+                    const firebaseCheckLists = snapshot.val() || {};
+                    
+                    if (Object.keys(firebaseCheckLists).length > 0) {
+                        console.log('✅ Firebase에서 체크리스트 복원:', Object.keys(firebaseCheckLists).length, '개 프로젝트');
+                        checkLists = firebaseCheckLists;
+                        localStorage.setItem('checkLists', JSON.stringify(checkLists));
+                        renderChecklist();
+                    } else if (Object.keys(checkLists).length > 0) {
+                        console.log('📤 로컬 체크리스트를 Firebase에 업로드');
+                        db.ref('checkLists').set(checkLists);
+                    }
+                    
+                    // 이후 실시간 동기화
+                    checkListsRef.on('value', (snapshot) => {
+                        const updatedCheckLists = snapshot.val() || {};
+                        checkLists = updatedCheckLists;
+                        localStorage.setItem('checkLists', JSON.stringify(checkLists));
+                        renderChecklist();
+                    });
+                }).catch(error => {
+                    console.error('❌ Firebase checkLists 읽기 실패:', error);
                     console.error('에러 상세:', error.code, error.message);
                 });
             }
