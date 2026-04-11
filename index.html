@@ -2576,8 +2576,6 @@
                 // Ctrl+Enter로 저장한 경우가 아니면 저장
                 if (!textarea.dataset.skipBlur) {
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
-                    
-                    }
                 }
             });
             
@@ -2586,17 +2584,12 @@
                 if (e.key === 'Escape') {
                     // ESC: 취소
                     textarea.dataset.skipBlur = true;
-                    
-                    }
-                    
                     renderCalendar();
                     selectCell(dateStr);
                 } else if (e.ctrlKey && e.key === 'Enter') {
                     // Ctrl+Enter: 저장하고 편집 종료
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
-                    
-                    }
                     
                     // 편집 종료하고 셀 선택 유지
                     renderCalendar();
@@ -2605,8 +2598,6 @@
                     // Tab: 저장하고 다음 셀로 이동 후 바로 편집
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
-                    
-                    }
                     
                     // 다음 셀로 이동
                     const currentDate = new Date(dateStr);
@@ -2628,8 +2619,6 @@
                     // Shift+Tab: 저장하고 이전 셀로 이동 후 바로 편집
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
-                    
-                    }
                     
                     // 이전 셀로 이동
                     const currentDate = new Date(dateStr);
