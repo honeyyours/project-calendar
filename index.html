@@ -742,54 +742,6 @@
         }
 
         /* 실시간 협업 */
-        .online-users {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            padding: 12px;
-            max-width: 200px;
-            z-index: 100;
-        }
-
-        .online-users h3 {
-            font-size: 13px;
-            margin-bottom: 8px;
-            color: #6b7280;
-            font-weight: 600;
-        }
-
-        .user-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 8px;
-            border-radius: 4px;
-            margin: 4px 0;
-            font-size: 12px;
-        }
-
-        .user-avatar {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 11px;
-        }
-
-        .user-status {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10b981;
-        }
-
         .editing-indicator {
             position: absolute;
             top: 4px;
@@ -805,12 +757,6 @@
         .day-cell.being-edited {
             outline: 2px solid;
             outline-offset: -2px;
-        }
-
-        @media (max-width: 768px) {
-            .online-users {
-                display: none;
-            }
         }
 
         /* 프로젝트별 색상 */
@@ -1402,9 +1348,6 @@
             }
 
             /* 온라인 사용자 목록 숨기기 */
-            .online-users {
-                display: none !important;
-            }
 
             /* 컨텍스트 메뉴 */
             .context-menu {
@@ -1812,7 +1755,7 @@
     <div class="container">
         <div class="header">
             <div style="display: flex; align-items: center; gap: 12px;">
-                <h1>프로젝트 일정 관리</h1>
+                <h1 id="appTitle" onclick="editAppTitle()" style="cursor: pointer; user-select: none;" title="클릭하여 수정">프로젝트 일정 관리</h1>
                 <!-- 설정 드롭다운 -->
                 <div class="settings-dropdown" id="settingsDropdown">
                     <button class="btn settings-icon-btn" onclick="toggleSettingsMenu(event)" title="설정">
@@ -1937,12 +1880,6 @@
 
     <div class="save-indicator" id="saveIndicator">
         ✓ 자동 저장됨
-    </div>
-
-    <!-- 온라인 사용자 목록 -->
-    <div class="online-users" id="onlineUsers" style="display: none;">
-        <h3>👥 접속 중</h3>
-        <div id="userList"></div>
     </div>
 
     <!-- 우클릭 컨텍스트 메뉴 -->
@@ -2171,6 +2108,8 @@
         
         let checkLists = JSON.parse(localStorage.getItem('checkLists')) || {};
         
+        let appTitle = localStorage.getItem('appTitle') || '프로젝트 일정 관리';
+        
         let currentView = 'all'; // 'all' 또는 프로젝트 ID
         let currentEditKey = null;
         let currentEditProjectId = null;
@@ -2211,7 +2150,6 @@
         
         // 실시간 협업
         let currentUser = null;
-        let onlineUsers = {};
         let userColors = ['#3b82f6', '#ec4899', '#10b981', '#f59e0b', '#6366f1', '#ef4444'];
         
         // 사용자 정보 생성
@@ -2241,6 +2179,12 @@
                 console.warn('⚠️ changeLog가 배열이 아닙니다. 초기화합니다.');
                 changeLog = [];
                 localStorage.setItem('changeLog', JSON.stringify(changeLog));
+            }
+            
+            // 제목 로드
+            const titleElement = document.getElementById('appTitle');
+            if (titleElement) {
+                titleElement.textContent = appTitle;
             }
             
             renderProjectTabs();
@@ -2617,11 +2561,6 @@
                 return;
             }
             
-            // 실시간 협업: 편집 시작 알림
-            if (typeof updateEditingStatus === 'function') {
-                updateEditingStatus(dateStr);
-            }
-            
             // textarea 생성
             const textarea = document.createElement('textarea');
             textarea.className = 'edit-textarea';
@@ -2638,9 +2577,6 @@
                 if (!textarea.dataset.skipBlur) {
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
                     
-                    // 실시간 협업: 편집 종료 알림
-                    if (typeof clearEditingStatus === 'function') {
-                        clearEditingStatus();
                     }
                 }
             });
@@ -2651,9 +2587,6 @@
                     // ESC: 취소
                     textarea.dataset.skipBlur = true;
                     
-                    // 실시간 협업: 편집 종료 알림
-                    if (typeof clearEditingStatus === 'function') {
-                        clearEditingStatus();
                     }
                     
                     renderCalendar();
@@ -2663,9 +2596,6 @@
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
                     
-                    // 실시간 협업: 편집 종료 알림
-                    if (typeof clearEditingStatus === 'function') {
-                        clearEditingStatus();
                     }
                     
                     // 편집 종료하고 셀 선택 유지
@@ -2676,9 +2606,6 @@
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
                     
-                    // 실시간 협업: 편집 종료 알림
-                    if (typeof clearEditingStatus === 'function') {
-                        clearEditingStatus();
                     }
                     
                     // 다음 셀로 이동
@@ -2702,9 +2629,6 @@
                     e.preventDefault();
                     saveCellDirect(scheduleKey, textarea.value, dateStr);
                     
-                    // 실시간 협업: 편집 종료 알림
-                    if (typeof clearEditingStatus === 'function') {
-                        clearEditingStatus();
                     }
                     
                     // 이전 셀로 이동
@@ -4593,14 +4517,6 @@
                 localStorage.setItem('userName', trimmedName);
                 currentUser.name = trimmedName;
                 
-                // Firebase 프레즌스 업데이트
-                if (useFirebase && db) {
-                    const presenceRef = db.ref(`presence/${currentUser.id}`);
-                    presenceRef.update({
-                        name: trimmedName
-                    });
-                }
-                
                 alert(`닉네임이 "${trimmedName}"(으)로 변경되었습니다.`);
             }
         }
@@ -4733,6 +4649,80 @@
         }
 
         // ============================================
+        // 제목 편집
+        // ============================================
+
+        function editAppTitle() {
+            const h1 = document.getElementById('appTitle');
+            const currentTitle = h1.textContent;
+            
+            // input 생성
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentTitle;
+            input.style.cssText = `
+                font-size: 24px;
+                font-weight: bold;
+                border: 2px solid #3b82f6;
+                border-radius: 6px;
+                padding: 8px 12px;
+                outline: none;
+                width: auto;
+                min-width: 200px;
+            `;
+            
+            // h1을 input으로 교체
+            h1.replaceWith(input);
+            input.focus();
+            input.select();
+            
+            // 저장 함수
+            const saveTitle = () => {
+                const newTitle = input.value.trim() || '프로젝트 일정 관리';
+                
+                // h1 재생성
+                const newH1 = document.createElement('h1');
+                newH1.id = 'appTitle';
+                newH1.textContent = newTitle;
+                newH1.onclick = editAppTitle;
+                newH1.style.cssText = 'cursor: pointer; user-select: none;';
+                newH1.title = '클릭하여 수정';
+                
+                input.replaceWith(newH1);
+                
+                // 저장
+                appTitle = newTitle;
+                localStorage.setItem('appTitle', newTitle);
+                
+                // Firebase 저장
+                if (useFirebase && db) {
+                    db.ref('settings/appTitle').set(newTitle);
+                }
+                
+                showSaveIndicator('제목 변경됨');
+            };
+            
+            // Enter로 저장
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    saveTitle();
+                } else if (e.key === 'Escape') {
+                    // ESC로 취소
+                    const newH1 = document.createElement('h1');
+                    newH1.id = 'appTitle';
+                    newH1.textContent = currentTitle;
+                    newH1.onclick = editAppTitle;
+                    newH1.style.cssText = 'cursor: pointer; user-select: none;';
+                    newH1.title = '클릭하여 수정';
+                    input.replaceWith(newH1);
+                }
+            });
+            
+            // blur로 저장
+            input.addEventListener('blur', saveTitle);
+        }
+
+        // ============================================
         // 초기 로드
         // ============================================
         
@@ -4760,10 +4750,6 @@
                 // UI 업데이트
                 document.getElementById('firebaseStatus').textContent = '🔥 실시간 연결됨';
                 document.getElementById('firebaseStatus').classList.add('connected');
-                document.getElementById('onlineUsers').style.display = 'block';
-                
-                // 프레즌스 시스템 설정
-                setupPresence();
                 
                 // 데이터 실시간 동기화
                 setupRealtimeSync();
@@ -4780,40 +4766,6 @@
             } catch (error) {
                 console.error('Firebase 초기화 실패:', error);
                 alert('Firebase 연결에 실패했습니다. 로컬 모드로 실행됩니다.\n\n' + error.message);
-            }
-
-            function setupPresence() {
-                const presenceRef = db.ref(`presence/${currentUser.id}`);
-                const userInfo = {
-                    name: currentUser.name,
-                    color: currentUser.color,
-                    lastSeen: Date.now(),
-                    editingCell: null,
-                    currentView: currentView
-                };
-                
-                // 접속 시 등록
-                presenceRef.set(userInfo);
-                
-                // 종료 시 자동 삭제
-                presenceRef.onDisconnect().remove();
-                
-                // 다른 사용자 감지
-                const allPresenceRef = db.ref('presence');
-                allPresenceRef.on('value', (snapshot) => {
-                    onlineUsers = snapshot.val() || {};
-                    renderOnlineUsers();
-                    updateEditingIndicators();
-                });
-                
-                // 주기적으로 lastSeen 업데이트
-                setInterval(() => {
-                    presenceRef.set({
-                        ...userInfo,
-                        lastSeen: Date.now(),
-                        currentView: currentView
-                    });
-                }, 30000); // 30초마다
             }
             
             function setupRealtimeSync() {
@@ -4963,101 +4915,6 @@
                     console.error('에러 상세:', error.code, error.message);
                 });
             }
-            
-            // 편집 상태 업데이트 함수를 전역으로 노출
-            window.updateEditingStatus = function(dateStr) {
-                if (!useFirebase || !db) return;
-                
-                const presenceRef = db.ref(`presence/${currentUser.id}`);
-                presenceRef.set({
-                    name: currentUser.name,
-                    color: currentUser.color,
-                    lastSeen: Date.now(),
-                    editingCell: dateStr,
-                    currentView: currentView
-                });
-            };
-            
-            window.clearEditingStatus = function() {
-                if (!useFirebase || !db) return;
-                
-                const presenceRef = db.ref(`presence/${currentUser.id}`);
-                presenceRef.set({
-                    name: currentUser.name,
-                    color: currentUser.color,
-                    lastSeen: Date.now(),
-                    editingCell: null,
-                    currentView: currentView
-                });
-            };
-            
-            function renderOnlineUsers() {
-                const userListDiv = document.getElementById('userList');
-                const allUsers = Object.entries(onlineUsers).filter(([id, _]) => id !== currentUser.id);
-                
-                // 중복 제거: 같은 이름의 사용자는 최신 것만 유지
-                const uniqueUsers = new Map();
-                allUsers.forEach(([id, user]) => {
-                    const existingUser = uniqueUsers.get(user.name);
-                    if (!existingUser || id > existingUser.id) {
-                        uniqueUsers.set(user.name, { id, ...user });
-                    }
-                });
-                
-                const users = Array.from(uniqueUsers.values());
-                
-                if (users.length === 0) {
-                    userListDiv.innerHTML = '<div style="font-size: 11px; color: #d1d5db;">나만 접속 중</div>';
-                    return;
-                }
-                
-                userListDiv.innerHTML = users.map(user => {
-                    const editing = user.editingCell ? ` (편집 중)` : '';
-                    return `
-                        <div class="user-item">
-                            <div class="user-avatar" style="background: ${user.color};">
-                                ${user.name.charAt(0)}
-                            </div>
-                            <div style="flex: 1;">
-                                <div style="font-weight: 500;">${user.name}</div>
-                                ${editing ? `<div style="font-size: 10px; color: #6b7280;">${editing}</div>` : ''}
-                            </div>
-                            <div class="user-status"></div>
-                        </div>
-                    `;
-                }).join('');
-            }
-            
-            function updateEditingIndicators() {
-                // 모든 편집 중 표시 제거
-                document.querySelectorAll('.editing-indicator').forEach(el => el.remove());
-                document.querySelectorAll('.being-edited').forEach(el => {
-                    el.classList.remove('being-edited');
-                    el.style.outlineColor = '';
-                });
-                
-                // 다른 사용자가 편집 중인 셀 표시
-                Object.entries(onlineUsers).forEach(([id, user]) => {
-                    if (id === currentUser.id || !user.editingCell || user.currentView !== currentView) return;
-                    
-                    const cell = document.querySelector(`[data-date="${user.editingCell}"]`);
-                    if (cell) {
-                        cell.classList.add('being-edited');
-                        cell.style.outlineColor = user.color;
-                        
-                        const indicator = document.createElement('div');
-                        indicator.className = 'editing-indicator';
-                        indicator.style.background = user.color;
-                        indicator.textContent = user.name.charAt(0);
-                        indicator.title = `${user.name}님이 편집 중`;
-                        cell.appendChild(indicator);
-                    }
-                });
-            }
-            
-            // 전역 함수로 노출
-            window.renderOnlineUsers = renderOnlineUsers;
-            window.updateEditingIndicators = updateEditingIndicators;
         })();
     </script>
 </body>
